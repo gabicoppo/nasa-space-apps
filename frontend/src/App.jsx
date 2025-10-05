@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "./App.css";
 import "./index.css";
@@ -8,10 +8,31 @@ import SobreProjeto from "./pages/SobreProjeto";
 import HomePage from "./pages/HomePage";
 import TelaQuiz from "./pages/TelaQuiz";
 
+import { queryBuildKG } from './services/apiServices';
+
 import GlobalStyles from "./GlobalStyles";
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState('landing');
+
+
+  useEffect(() => {
+    const wakeUpBackend = async () => {
+      try {
+        console.log('Waking up backend...');
+        const response = await queryBuildKG("test");
+        
+        if (response.ok) {
+          console.log('Backend activated successfully');
+        }
+      } catch (error) {
+        console.error('Failed to wake up backend:', error);
+        // You can choose to retry or handle the error as needed
+      }
+    };
+
+    wakeUpBackend();
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   const handleMissionStart = useCallback(() => {
     setCurrentScreen('mission');

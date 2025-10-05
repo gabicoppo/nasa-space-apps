@@ -42,24 +42,30 @@ export class ActionsController {
 
      }
 
-     static async buildKGFromQuery(req: Request, res: Response) {
+    static async buildKGFromQuery(req: Request, res: Response) {
         try {
             const { query } = req.body;
             if (!query) {
                 return res.status(400).json({ error: "Query is required" });
             }
 
-            const result: QueryResultContext[] = await PineconeService.query(query, 4);
+            const result: QueryResultContext[] = await PineconeService.query(query, 3);
 
-            let combinedText = '';
-            for (const chunk of result) {
-                combinedText += chunk.text + '\n';
-            }
-            // pass the article name and link 
+            const combinedText = result.map(chunk => chunk.text).join('\n');
+
+            // --- MODIFIED SECTION ---
+
+            // Create a clean array of source objects with title and url
+            const sources = result.map(chunk => ({
+                title: chunk.title, // Maps the backend field to a clean 'title'
+                url: chunk.url
+            }));
 
             const kg = await KGService.extractKnowledgeGraphFromQuery(combinedText, query);
 
-            res.status(200).json({ kg });
+            // Respond with the knowledge graph and the structured sources array
+            res.status(200).json({ kg, sources });
+
         } catch (error) {
             console.error("Error in buildKGFromQuery:", error);
             res.status(500).json({ error: "Internal Server Error" });

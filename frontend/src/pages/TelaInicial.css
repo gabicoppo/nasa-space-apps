@@ -246,3 +246,112 @@ input[type=range]::-webkit-slider-thumb {
     color: #fff;
     border-color: #777;
 }
+
+
+.suggestions-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+/* Update this existing style for bigger buttons */
+.suggestion-item {
+  background-color: #374151;
+  color: #e5e7eb;
+  border: 1px solid #4b5563;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.suggestion-item:hover {
+  background-color: #06b6d4;
+  color: #ffffff;
+  border-color: #06b6d4;
+}
+
+/* Add/Update these styles in your CSS file */
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 15px;
+  color: #f3f4f6;
+}
+
+/* MODIFIED: Uses a single, combined animation now */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 5px solid #4b5563; /* Spinner track color */
+  border-top-color: #06b6d4; /* Spinner active color */
+  border-radius: 50%;
+  animation: spin-and-pulse 1.2s linear infinite; /* Using one reliable animation */
+}
+
+.loading-text {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* CORRECTED: Combined spin and pulse into one keyframe to avoid conflicts */
+@keyframes spin-and-pulse {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.05);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+.source-display-container {
+  margin-top: 25px;
+  padding: 15px;
+  background-color: #1f2937; /* Dark background */
+  border: 1px solid #374151;
+  border-radius: 8px;
+  text-align: left;
+  max-width: 600px;
+  width: 100%;
+}
+
+.source-boilerplate {
+  font-size: 12px;
+  color: #9ca3af; /* Lighter gray text */
+  margin: 0 0 5px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.source-title {
+  font-size: 16px;
+  color: #f3f4f6; /* White-ish text */
+  margin: 0 0 10px 0;
+  font-weight: 600;
+}
+
+.source-url {
+  display: inline-block;
+  font-size: 14px;
+  color: #06b6d4; /* Your theme's accent color */
+  text-decoration: none;
+  background-color: #374151;
+  padding: 6px 12px;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.source-url:hover {
+  background-color: #4b5563;
+  text-decoration: underline;
+}
