@@ -1,71 +1,87 @@
-import React, { useState } from "react";
+// App.jsx
+import React, { useState, useCallback } from "react";
 import "./App.css";
+import "./index.css"; // keep Tailwind directives available
 import TelaInicial from './pages/TelaInicial';
 import GlobalStyles from "./GlobalStyles";
+
+/**
+ * LandingSequence - pure/presentational component
+ * kept outside App to prevent re-creation on every render
+ */
+export const LandingSequence = ({ onStartMission }) => {
+  return (
+    <div className="landing-container">
+      {/* Section 1: Hero */}
+      <section className="hero-section" aria-label="Hero">
+        <h1 className="hero-title fade-in-up delay-200">🌌 Welcome, Explorer.</h1>
+        <p className="hero-sub fade-in-up delay-500">We present the BioAstra Navigator.</p>
+        <div className="scroll-hint fade-in-up delay-1000" aria-hidden="true">⬇ Scroll</div>
+      </section>
+
+      {/* Section 2: Info */}
+      <section className="info-section" aria-label="Mission Info">
+        <p className="info-text fade-in-up delay-200">
+          Our mission is to place the power of NASA's vast biological data library at your fingertips,
+        </p>
+        <p className="info-text highlight fade-in-up delay-500">
+          revealing the connections that will shape our next journey to the stars.
+        </p>
+      </section>
+
+      {/* Section 3: Actions */}
+      <section className="actions-section" aria-label="Actions">
+        <h2 className="actions-title fade-in-up delay-200">Ready to begin your mission?</h2>
+
+        <button
+          className="btn-primary mission-btn fade-in-up delay-500"
+          onClick={onStartMission}
+          aria-label="Enter Mission Control"
+        >
+          Enter Mission Control
+        </button>
+
+        <div className="actions-row fade-in-up delay-600">
+          <button
+            className="btn-secondary"
+            onClick={() => console.log('New clicked')}
+            aria-label="New"
+            type="button"
+          >
+            New
+          </button>
+
+          <button
+            className="btn-ghost"
+            onClick={() => alert('How it works (placeholder)')}
+            aria-label="How it works"
+            type="button"
+          >
+            How it works
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+};
 
 function App() {
   const [mostrarTelaInicial, setMostrarTelaInicial] = useState(false);
 
-  const handleChatClick = () => setMostrarTelaInicial(true);
-
-  const LandingSequence = () => (
-    <div className="landing-container">
-      {/* Seção 1: Hero */}
-      <section className="relative h-screen w-full flex flex-col justify-center items-center text-center p-4">
-        <h1 className="text-6xl md:text-8xl font-bold mb-4 fade-in-up" style={{ animationDelay: '0.2s' }}>🌌 Welcome, Explorer.</h1>
-        <p className="text-2xl md:text-3xl text-gray-300 fade-in-up" style={{ animationDelay: '0.5s' }}>We present the BioAstra Navigator.</p>
-        <div className="absolute bottom-10 animate-bounce text-gray-200 text-lg fade-in-up" style={{ animationDelay: '1s' }}>⬇ Scroll</div>
-      </section>
-
-      {/* Seção 2: Info */}
-      <section className="relative h-screen w-full flex flex-col justify-center items-center text-center p-4">
-        <p className="text-3xl md:text-4xl max-w-3xl leading-relaxed fade-in-up" style={{ animationDelay: '0.2s' }}>
-          Our mission is to place the power of NASA's vast biological data library at your fingertips,
-        </p>
-        <p className="text-3xl md:text-4xl max-w-3xl text-cyan-300 mt-4 leading-relaxed fade-in-up" style={{ animationDelay: '0.5s' }}>
-          revealing the connections that will shape our next journey to the stars.
-        </p>
-        <div className="absolute bottom-10 animate-bounce text-gray-200 text-lg fade-in-up" style={{ animationDelay: '1s' }}>⬇ Continue</div>
-      </section>
-
-      {/* Seção 3: Actions */}
-      <section className="relative h-screen w-full flex flex-col justify-center items-center text-center p-4 gap-6">
-        <h1 className="text-5xl md:text-6xl font-bold mb-4 fade-in-up" style={{ animationDelay: '0.2s' }}>Ready to begin your mission?</h1>
-        <button
-          className="text-2xl md:text-3xl font-extrabold w-96 md:w-104 p-6 md:p-8 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-500
-                     hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/60 transition-all duration-300 fade-in-up"
-          onClick={handleChatClick}
-          style={{ animationDelay: '0.5s' }}
-        >
-          🚀 Entrar no Mission Control
-        </button>
-        <button
-          className="text-xl md:text-2xl font-semibold w-56 md:w-64 p-4 md:p-5 rounded-lg bg-white/10 border border-white/20 text-cyan-200
-                     hover:bg-white/20 transition-all duration-300 fade-in-up"
-          onClick={() => console.log('Novo clicked')}
-          style={{ animationDelay: '0.6s' }}
-        >
-          ✨ Novo
-        </button>
-        <button 
-          className="text-lg font-semibold w-72 p-4 rounded-lg bg-transparent border-2 border-gray-500
-                     hover:border-white hover:bg-gray-800/50 transition-all duration-300 fade-in-up"
-          style={{ animationDelay: '0.8s' }}
-        >
-          🛰️ How it works
-        </button>
-      </section>
-    </div>
-  );
+  const handleChatClick = useCallback(() => {
+    setMostrarTelaInicial(true);
+  }, []);
 
   return (
     <>
       <GlobalStyles />
-      <div className="stars"></div>
-      <div className="twinkling"></div>
-      
-      <main className="relative z-10">
-        {mostrarTelaInicial ? <TelaInicial /> : <LandingSequence />}
+      {/* Background layers - keep behind content */}
+      <div className="stars" aria-hidden="true" />
+      <div className="twinkling" aria-hidden="true" />
+      <div className="planet-earth" aria-hidden="true" />
+
+      <main className="app-main" role="main">
+        {mostrarTelaInicial ? <TelaInicial /> : <LandingSequence onStartMission={handleChatClick} />}
       </main>
     </>
   );

@@ -1,88 +1,147 @@
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* App.css */
 
-body {
-  background-color: #0b0b16;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #b3d4f3;
-  text-align: center;
+/* Reset (kept minimal; global reset already inlined in GlobalStyles for fonts) */
+* {
+  box-sizing: border-box;
 }
 
 /* Container */
 .landing-container {
   width: 100%;
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh; /* used with overflow to enable scroll-snap */
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  z-index: 10; /* sits above background layers */
 }
 
-/* Seções */
-section {
+/* Section base */
+.landing-container section {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   padding: 2rem;
+  scroll-snap-align: start;
+  text-align: center;
 }
 
 /* Hero */
-.hero h1 {
-  font-size: 2.5rem;
+.hero-section .hero-title {
+  font-size: clamp(2rem, 6vw, 4rem);
   font-weight: 800;
   color: #a5d1ff;
+  margin-bottom: 0.5rem;
 }
 
-.hero p {
-  font-size: 1.2rem;
-  margin-top: 1rem;
+.hero-section .hero-sub {
+  font-size: clamp(1.1rem, 3vw, 1.8rem);
+  color: #cbd9ea;
+  margin-top: 0.5rem;
 }
 
-/* Texto com destaque */
+/* Info */
+.info-section .info-text {
+  font-size: clamp(1.15rem, 3vw, 1.8rem);
+  max-width: 60ch;
+  color: #d9eaf8;
+  line-height: 1.5;
+  margin: 0.5rem 0;
+}
+
 .highlight {
   color: #00c9ff;
-  font-weight: bold;
+  font-weight: 700;
 }
 
-/* Botões */
+/* Actions */
+.actions-section .actions-title {
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  margin-bottom: 1rem;
+}
+
+/* Buttons */
 .btn-primary {
-  background-color: #00c9ff;
+  display: inline-block;
+  background: linear-gradient(90deg, #7c3aed 0%, #06b6d4 100%);
   border: none;
+  color: #071022;
   padding: 1rem 2rem;
-  margin: 1rem;
-  border-radius: 8px;
-  font-weight: bold;
+  border-radius: 1rem;
+  font-weight: 800;
+  font-size: 1.2rem;
   cursor: pointer;
-  color: #0b0b16;
-  transition: 0.3s;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+  box-shadow: 0 8px 18px rgba(6, 182, 212, 0.15);
+}
+
+.mission-btn {
+  width: min(680px, 92%);
+  max-width: 680px;
 }
 
 .btn-primary:hover {
-  background-color: #00a6d1;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 14px 38px rgba(6, 182, 212, 0.18);
 }
 
 .btn-secondary {
   background: transparent;
-  border: 1px solid #00c9ff;
-  padding: 1rem 2rem;
-  margin: 1rem;
-  border-radius: 8px;
-  font-weight: bold;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #dff6ff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
   cursor: pointer;
-  color: #00c9ff;
-  transition: 0.3s;
 }
 
-.btn-secondary:hover {
-  background-color: rgba(0, 201, 255, 0.1);
+.btn-ghost {
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.06);
+  color: #c6efff;
+  padding: 0.8rem 1rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
 }
 
-/* Indicador de rolagem */
-.scroll-indicator {
-  margin-top: 2rem;
-  font-size: 0.9rem;
-  opacity: 0.7;
+/* Small utility / layout */
+.actions-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Scroll hint */
+.scroll-hint {
+  position: absolute;
+  bottom: 2.25rem;
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.8);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* Animation delay utility classes to avoid inline style repetition */
+.delay-100 { animation-delay: 0.1s; }
+.delay-150 { animation-delay: 0.15s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-800 { animation-delay: 0.8s; }
+.delay-1000 { animation-delay: 1s; }
+
+/* Reuse fade-in-up defined in GlobalStyles (so class overlap is intentional) */
+.fade-in-up {
+  /* animation properties provided by GlobalStyles */
+}
+
+/* Responsive tweaks */
+@media (max-width: 640px) {
+  .btn-primary { font-size: 1rem; padding: 0.9rem 1.2rem; }
+  .actions-row { flex-direction: column; gap: 0.6rem; }
 }
