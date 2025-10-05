@@ -59,3 +59,23 @@ export const KnowledgeGraphJSONSchema = {
   required: ['nodes', 'edges'],
   additionalProperties: false,
 } as const;
+
+export interface ArticleMetadata {
+    // 1. Your specific keys
+    source: string;
+    title: string;
+    url: string;
+    chunk_index: number;
+    text: string; 
+
+    // This tells TypeScript that the object can also contain any other string key
+    // with a value of any type, which satisfies the Pinecone client's constraint.
+    [key: string]: any; 
+}
+
+export type QueryResultContext = {
+    text: string;
+    title: string;
+    url: string;
+    score: number;
+};
