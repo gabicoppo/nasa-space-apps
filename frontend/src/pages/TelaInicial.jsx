@@ -28,6 +28,7 @@ const TelaInicial = () => {
     
   return (
     <main className="tela-inicial">
+        
         {/* Título Principal */}
         <h1 className="tela-inicial__title">
             Stellar Search
@@ -35,7 +36,7 @@ const TelaInicial = () => {
 
         {/* Subtítulo */}
         <p className="tela-inicial__subtitle">
-            Your NASA Superpower for Biological Data.
+            Ask anything to your NASA Superpower for Biological Data.
         </p>
 
         {/* Formulário de Busca */}
