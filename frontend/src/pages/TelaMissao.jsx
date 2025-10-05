@@ -7,31 +7,20 @@ import astronautaImg from "../assets/Imagem-astronauta2.png";
 
 const TelaMissao = ({ onBack, onComplete }) => {
   const [displayText, setDisplayText] = useState("");
-  const [showCursor, setShowCursor] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const fullText =
-    "Grreetings, crew member! I need your help with a space mission. You will have to answer a series of difficult questions. But don’t worry—the stars will help you find the right path!";
+  const fullText = "Greetings, crew member! I need your help with a space mission. You will have to answer a series of difficult questions. But don't worry - the stars will help you find the right path!";
 
-  // Digitação do texto
+  // Efeito de digitação simplificado
   useEffect(() => {
-    let currentIndex = 0;
-    const typingInterval = setInterval(() => {
-      if (currentIndex < fullText.length) {
-        setDisplayText((prev) => prev + fullText[currentIndex]);
-        currentIndex++;
-      } else {
-        clearInterval(typingInterval);
-      }
-    }, 20);
-
-    return () => clearInterval(typingInterval);
-  }, []);
-
-  // Blink do cursor
-  useEffect(() => {
-    const id = setInterval(() => setShowCursor((c) => !c), 500);
-    return () => clearInterval(id);
-  }, []);
+    if (currentIndex < fullText.length) {
+      const timeout = setTimeout(() => {
+        setDisplayText(fullText.slice(0, currentIndex + 1));
+        setCurrentIndex(currentIndex + 1);
+      }, 20);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, fullText]);
 
   // Garante que nenhuma input capture as teclas
   useEffect(() => {
@@ -54,42 +43,19 @@ const TelaMissao = ({ onBack, onComplete }) => {
         e.keyCode === 32;
 
       if ((isEnter || isSpace) && typeof onComplete === "function") {
-        e.preventDefault(); // evita scroll
+        e.preventDefault();
         onComplete();
       }
     };
 
-    // passive:false para permitir preventDefault em Space
     window.addEventListener("keydown", handleKeyDown, { passive: false });
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onComplete]);
 
-  // Renderiza texto mostrando cursor apenas no último caractere
-  const renderTypingText = () => {
-    if (!displayText) return null;
-    const lastChar = displayText.slice(-1);
-    const rest = displayText.slice(0, -1);
-
-    return (
-      <>
-        {rest}
-        <span
-          className="caret"
-          style={{
-            borderRight: showCursor ? "3px solid rgba(0, 255, 255, 0.8)" : "3px solid transparent",
-            paddingRight: "2px",
-          }}
-        >
-          {lastChar}
-        </span>
-      </>
-    );
-  };
-
   return (
     <main className="tela-missao">
       <button onClick={onBack} className="back-button">
-        ← Voltar
+        ← Back
       </button>
 
       <div className="content-container">
@@ -101,15 +67,19 @@ const TelaMissao = ({ onBack, onComplete }) => {
           />
         </div>
 
-        <div className="text-box" style={{ minHeight: "80px" }}>
-          <p className="typing-text">{renderTypingText()}</p>
-        </div>
+        <div className="right-panel">
+          <div className="text-box" style={{ minHeight: "80px" }}>
+            <p className="typing-text">
+              {displayText}
+              {currentIndex < fullText.length && <span className="caret"></span>}
+            </p>
+          </div>
 
-        {/* Botão opcional para avançar com clique/touch */}
-        <div className="actions">
-          <button className="next-button" onClick={onComplete}>
-            Pressione Espaço/Enter ou clique aqui →
-          </button>
+          <div className="actions">
+            <button className="next-button" onClick={onComplete}>
+              Next →
+            </button>
+          </div>
         </div>
       </div>
     </main>

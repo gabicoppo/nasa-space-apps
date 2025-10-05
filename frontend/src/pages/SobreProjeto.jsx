@@ -1,53 +1,26 @@
+// src/pages/SobreProjeto.jsx
+
 import React, { useState, useEffect } from "react";
 import "./TelaMissao.css";
 import "../App.css";
 import "../index.css";
 import astronautaImg from "../assets/Imagem-astronauta2.png";
 
-
 const SobreProjeto = ({ onBack }) => {
     const [displayText, setDisplayText] = useState("");
-    const [showCursor, setShowCursor] = useState(true);
-    const fullText = "Thhe mission will consist of 3 questions involving biology and space! When you hover your mouse over the stars above each question, you’ll receive valuable hints.";
+    const [currentIndex, setCurrentIndex] = useState(0);
+    
+    const fullText = "The mission will consist of 3 questions involving biology and space! When you hover your mouse over the stars above each question, you will receive valuable hints.";
 
     useEffect(() => {
-        let currentIndex = 0;
-        const typingInterval = setInterval(() => {
-            if (currentIndex < fullText.length) {
-                setDisplayText(prev => prev + fullText[currentIndex]);
-                currentIndex++;
-            } else {
-                clearInterval(typingInterval);
-                setShowCursor(false);
-            }
-        }, 20);
-        return () => clearInterval(typingInterval);
-    }, []);
-
-    // // Efeito do cursor piscando
-    useEffect(() => {
-        if (!showCursor) return;
-        const cursorInterval = setInterval(() => {
-            setShowCursor(c => !c);
-        }, 500);
-        return () => clearInterval(cursorInterval);
-    }, [showCursor]);
-
-    // Renderiza texto com cursor apenas na última letra
-    const renderTypingText = () => {
-        if (displayText.length === 0) return showCursor ? "|" : "";
-        const lastChar = displayText[displayText.length - 1];
-        const rest = displayText.slice(0, -1);
-        return (
-            <>
-                {rest}
-                <span className="caret" style={{ borderRight: showCursor ? "3px solid rgba(255, 255, 255, 0.9)" : "3px solid transparent", paddingRight: "2px" }}>
-                    {lastChar}
-                </span>
-            </>
-        );
-    };
-
+        if (currentIndex < fullText.length) {
+            const timeout = setTimeout(() => {
+                setDisplayText(fullText.slice(0, currentIndex + 1));
+                setCurrentIndex(currentIndex + 1);
+            }, 20);
+            return () => clearTimeout(timeout);
+        }
+    }, [currentIndex, fullText]);
 
     return (
         <main className="tela-missao">
@@ -63,10 +36,13 @@ const SobreProjeto = ({ onBack }) => {
                     />
                 </div>
                 <div className="text-box" style={{ minHeight: '80px' }}>
-                    <p className="typing-text" style={{ whiteSpace: 'pre-wrap', minHeight: '1em' }}>
-                        {renderTypingText()}
+                    <p className="typing-text">
+                        {displayText}
+                        {currentIndex < fullText.length && <span className="caret"></span>}
                     </p>
                 </div>
+
+                
             </div>
         </main>
     );
