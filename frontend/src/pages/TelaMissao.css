@@ -144,3 +144,41 @@
         transform: translateY(0);
     }
 }
+
+/* Adicione ao final de TelaMissao.css */
+
+.start-quiz-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    background: linear-gradient(90deg, #7c3aed 0%, #06b6d4 100%);
+    border: none;
+    border-radius: 50px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+
+    /* Animação de entrada */
+    animation: fade-in-up 0.8s ease-out;
+}
+
+.start-quiz-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
+}
+
+/* Animação usada pelo botão */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
