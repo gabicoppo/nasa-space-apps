@@ -1,49 +1,55 @@
 /* App.css */
 
-/* Reset (kept minimal; global reset already inlined in GlobalStyles for fonts) */
+/* Reset */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* Container */
+/* Main Container */
 .landing-container {
   width: 100%;
-  height: 100vh; /* used with overflow to enable scroll-snap */
+  height: 100dvh;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   position: relative;
-  z-index: 10; /* sits above background layers */
+  z-index: 10;
 }
 
-/* Section base */
+/* Sections */
 .landing-container section {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100dvh;
   padding: 2rem;
   scroll-snap-align: start;
+  scroll-snap-stop: always;
   text-align: center;
+  position: relative;
 }
 
 /* Hero */
-.hero-section .hero-title {
+.hero-title {
   font-size: clamp(2rem, 6vw, 4rem);
-  font-weight: 800;
+  font-weight: 700;
   color: #a5d1ff;
   margin-bottom: 0.5rem;
 }
 
-.hero-section .hero-sub {
-  font-size: clamp(1.1rem, 3vw, 1.8rem);
+.hero-sub {
+  font-size: clamp(1.1rem, 3vw, 1.6rem);
   color: #cbd9ea;
   margin-top: 0.5rem;
 }
 
 /* Info */
-.info-section .info-text {
+.info-text {
   font-size: clamp(1.15rem, 3vw, 1.8rem);
   max-width: 60ch;
   color: #d9eaf8;
@@ -56,92 +62,125 @@
   font-weight: 700;
 }
 
-/* Actions */
-.actions-section .actions-title {
-  font-size: clamp(1.6rem, 4vw, 2.6rem);
-  margin-bottom: 1rem;
+/* Actions Section */
+.actions-section {
+  background: radial-gradient(circle at center, rgba(6, 182, 212, 0.12), transparent 70%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 6rem;
 }
 
-/* Buttons */
-.btn-primary {
-  display: inline-block;
-  background: linear-gradient(90deg, #7c3aed 0%, #06b6d4 100%);
-  border: none;
-  color: #071022;
-  padding: 1rem 2rem;
-  border-radius: 1rem;
-  font-weight: 800;
-  font-size: 1.2rem;
+.actions-title {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  margin-bottom: 1.5rem;
+  color: #dff6ff;
+  text-shadow: 0 0 8px rgba(6, 182, 212, 0.3);
+}
+
+/* Actions Layout */
+.actions-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+  margin-top: 2.5rem;
+  width: 100%;
+}
+
+/* Composite Buttons */
+.btn-composite {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: min(440px, 92%);
+  padding: 1.8rem 1rem;
+  border-radius: 0.75rem;
   cursor: pointer;
-  transition: transform 220ms ease, box-shadow 220ms ease;
-  box-shadow: 0 8px 18px rgba(6, 182, 212, 0.15);
+  transition: all 220ms ease;
 }
 
-.mission-btn {
-  width: min(680px, 92%);
-  max-width: 680px;
+/* Inner Texts */
+.btn-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.btn-desc {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin-top: 0.35rem;
+  line-height: 1.4;
+  max-width: 90%;
+}
+
+/* Primary Button */
+.btn-primary {
+  background: linear-gradient(90deg, #7c3aed 0%, #06b6d4 100%);
+  color: #071022;
+  border: none;
+  box-shadow: 0 0 12px rgba(0, 201, 255, 0.25);
 }
 
 .btn-primary:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 14px 38px rgba(6, 182, 212, 0.18);
+  background: linear-gradient(90deg, #7c3aed 0%, #06b6d4 100%);
+  box-shadow: 0 0 20px rgba(0, 201, 255, 0.4);
+  transform: translateY(-3px);
 }
 
+/* Secondary Button */
 .btn-secondary {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.12);
-  color: #dff6ff;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-  cursor: pointer;
+  color: #00c9ff;
+  border: 2px solid #00c9ff;
+  box-shadow: 0 0 10px rgba(0, 201, 255, 0.1);
 }
 
-.btn-ghost {
-  background: transparent;
-  border: 2px solid rgba(255,255,255,0.06);
-  color: #c6efff;
-  padding: 0.8rem 1rem;
-  border-radius: 0.75rem;
-  cursor: pointer;
+.btn-secondary:hover {
+  background: rgba(0, 201, 255, 0.08);
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(0, 201, 255, 0.3);
 }
 
-/* Small utility / layout */
-.actions-row {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Scroll hint */
+/* Scroll Hint */
 .scroll-hint {
   position: absolute;
-  bottom: 2.25rem;
+  bottom: 2rem;
   font-size: 0.95rem;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
   opacity: 0.9;
   pointer-events: none;
 }
 
-/* Animation delay utility classes to avoid inline style repetition */
+.final-hint {
+  bottom: 1rem;
+  opacity: 0.75;
+  font-size: 0.9rem;
+}
+
+/* Animations */
 .delay-100 { animation-delay: 0.1s; }
-.delay-150 { animation-delay: 0.15s; }
 .delay-200 { animation-delay: 0.2s; }
-.delay-300 { animation-delay: 0.3s; }
 .delay-400 { animation-delay: 0.4s; }
 .delay-500 { animation-delay: 0.5s; }
-.delay-600 { animation-delay: 0.6s; }
 .delay-800 { animation-delay: 0.8s; }
 .delay-1000 { animation-delay: 1s; }
 
-/* Reuse fade-in-up defined in GlobalStyles (so class overlap is intentional) */
 .fade-in-up {
-  /* animation properties provided by GlobalStyles */
+  animation: fadeInUp 0.8s ease forwards;
 }
 
-/* Responsive tweaks */
+/* Responsive */
 @media (max-width: 640px) {
-  .btn-primary { font-size: 1rem; padding: 0.9rem 1.2rem; }
-  .actions-row { flex-direction: column; gap: 0.6rem; }
+  .btn-title {
+    font-size: 1.05rem;
+  }
+
+  .btn-desc {
+    font-size: 0.85rem;
+  }
+
+  .actions-column {
+    gap: 1.2rem;
+  }
 }
