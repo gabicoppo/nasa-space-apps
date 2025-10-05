@@ -1,5 +1,6 @@
 // App.jsx
 import React, { useState, useCallback } from "react";
+
 import "./App.css";
 import "./index.css"; // keep Tailwind directives available
 import TelaInicial from './pages/TelaInicial';
@@ -14,7 +15,7 @@ export const LandingSequence = ({ onStartMission }) => {
     <div className="landing-container">
       {/* Section 1: Hero */}
       <section className="hero-section" aria-label="Hero">
-        <h1 className="hero-title fade-in-up delay-200">🌌 Welcome, Explorer.</h1>
+        <h1 className="hero-title fade-in-up delay-200">Welcome, Explorer.</h1>
         <p className="hero-sub fade-in-up delay-500">We present the BioAstra Navigator.</p>
         <div className="scroll-hint fade-in-up delay-1000" aria-hidden="true">⬇ Scroll</div>
       </section>
@@ -38,7 +39,7 @@ export const LandingSequence = ({ onStartMission }) => {
           onClick={onStartMission}
           aria-label="Enter Mission Control"
         >
-          Enter Mission Control
+          New here? Get to know our new tool.
         </button>
 
         <div className="actions-row fade-in-up delay-600">
