@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom'; // Importa o Link
 import cytoscape from 'cytoscape';
 import { quizData } from '../data/quizData';
 import './TelaQuiz.css';
@@ -123,6 +124,11 @@ export default function TelaQuiz() {
 
   return (
     <div className="quiz-container">
+      {/* --- BOTÃO VOLTAR ADICIONADO AQUI --- */}
+      <Link to="/" className="back-to-home-button">
+        ← Voltar à Home
+      </Link>
+
       {showResults ? (
         <div className="quiz-screen">
           <div className="quiz-content">
