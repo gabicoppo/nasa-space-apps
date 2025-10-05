@@ -39,6 +39,8 @@ const GlobalStyles = () => (
       line-height: 1.05;
     }
 
+    
+
     /* Background layers */
     .stars, .twinkling, .planet-earth {
       position: fixed;

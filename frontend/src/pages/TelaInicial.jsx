@@ -38,7 +38,7 @@ const TelaInicial = () => {
       <div className="planet-earth"></div>
 
       <main className="tela-inicial">
-        <h1 className="tela-inicial__title">Stellar Search</h1>
+        <h1 className="tela-inicial__title">BioAstra Navigator</h1>
         
         <p className="tela-inicial__subtitle">
           Ask anything to your NASA Superpower for Biological Data.

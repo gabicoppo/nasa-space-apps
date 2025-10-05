@@ -170,6 +170,36 @@
     transform: translateY(-3px);
     box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
 }
+/* Botão Start Quiz */
+.start-quiz-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Courier New', monospace;
+    backdrop-filter: blur(10px);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    text-align: center;
+    animation: fade-in-up 0.5s ease-out;
+}
+
+.start-quiz-button:hover {
+    background: rgba(0, 255, 255, 0.2);
+    border-color: rgba(0, 255, 255, 0.8);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.start-quiz-button:active {
+    transform: translateY(0);
+}
 
 /* Animação usada pelo botão */
 @keyframes fade-in-up {
@@ -181,4 +211,6 @@
     opacity: 1;
     transform: translateY(0);
   }
+
+  
 }

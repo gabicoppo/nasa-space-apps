@@ -3,27 +3,27 @@
 export const quizData = [
   {
     id: 1,
-    questionText: "Qual foi o primeiro __animal a orbitar a Terra__, abrindo caminho para futuros programas de pesquisa biomédica no espaço?",
-    options: ["Ham, o chimpanzé", "Félicette, a gata", "Laika, a cadela", "Albert II, o macaco"],
-    correctAnswer: "Laika, a cadela",
-    hintKeyword: "animal a orbitar a terra",
+    questionText: "Which was the first __animal to orbit the Earth__, opening the way for future biomedical research programs in space?",
+    options: ["Ham, the chimpanzee", "Félicette, the cat", "Laika, the dog", "Albert II, the monkey"],
+    correctAnswer: "Laika, the dog",
+    hintKeyword: "animal to orbit the Earth",
     graphData: {
       nodes: [
-        { data: { id: "Laika", name: "Laika", type: "Animal", color: '#ffa500', description: "Uma cadela espacial soviética, o primeiro ser vivo a orbitar a Terra.", link: "https://www.google.com/search?q=Laika+(dog)" } },
-        { data: { id: "Sputnik 2", name: "Sputnik 2", type: "Spacecraft", color: '#4682b4', description: "A espaçonave que levou Laika ao espaço em 1957.", link: "https://www.google.com/search?q=Sputnik+2" } },
-        { data: { id: "Bion program", name: "Bion Program", type: "Program", color: '#9370db', description: "Programa de biosatélites que se beneficiou dos dados da missão de Laika.", link: "https://www.google.com/search?q=Bion+program" } }
+        { data: { id: "Laika", name: "Laika", type: "Animal", color: '#ffa500', description: "A Soviet space dog, the first living being to orbit the Earth.", link: "https://www.google.com/search?q=Laika+(dog)" } },
+        { data: { id: "Sputnik 2", name: "Sputnik 2", type: "Spacecraft", color: '#4682b4', description: "The spacecraft that carried Laika into space in 1957.", link: "https://www.google.com/search?q=Sputnik+2" } },
+        { data: { id: "Bion program", name: "Bion Program", type: "Program", color: '#9370db', description: "A biosatellite program which benefited from Laika's mission data.", link: "https://www.google.com/search?q=Bion+program" } }
       ],
       edges: [
-        { data: { source: "Laika", target: "Sputnik 2", description: "Laika foi lançada a bordo da Sputnik 2." } },
-        { data: { source: "Laika", target: "Bion program", description: "A missão de Laika forneceu dados essenciais para o futuro programa Bion." } }
+        { data: { source: "Laika", target: "Sputnik 2", description: "Laika was launched aboard Sputnik 2." } },
+        { data: { source: "Laika", target: "Bion program", description: "Laika's mission provided essential data for the future Bion program." } }
       ]
     }
   },
   {
     id: 2,
-    questionText: "Qual país lançou o biosatélite __Bion-M 1__, focado em experimentos com camundongos (Mus musculus)?",
-    options: ["EUA", "China", "Rússia", "Agência Espacial Europeia"],
-    correctAnswer: "Rússia",
+    questionText: "Which country launched the __Bion-M 1__ biosatellite, focused on experiments with mice (Mus musculus)?",
+    options: ["USA", "China", "Russia", "European Space Agency"],
+    correctAnswer: "Russia",
     hintKeyword: "bion-m 1",
     graphData: {
       nodes: [

@@ -70,10 +70,10 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData, hintKeyword }) => {
 
   return (
     <div className={`hint-screen ${isVisible ? 'visible' : ''}`}>
-      <button onClick={onGoBack} className="top-right-button">Voltar</button>
+      <button onClick={onGoBack} className="top-right-button">Back to Quiz</button>
       <div className="stars-background"><div className="stars" style={{boxShadow: starShadows.s1}}></div><div className="stars2" style={{boxShadow: starShadows.s2}}></div><div className="stars3" style={{boxShadow: starShadows.s3}}></div></div>
       <div className="top-search-bar">
-        <form onSubmit={handleSearchSubmit}><input className="search-input" type="text" placeholder="Digite a palavra-chave sublinhada..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} /><button className="search-button" type="submit">Buscar</button></form>
+        <form onSubmit={handleSearchSubmit}><input className="search-input" type="text" placeholder="Digite a palavra-chave sublinhada..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} /><button className="search-button" type="submit">Search</button></form>
         <div className={`search-alert ${isAlertVisible ? 'visible' : ''}`}>Palavra-chave incorreta. A dica é: <strong>{hintKeyword}</strong></div>
       </div>
       {hintState === 'graph' && (
@@ -91,7 +91,7 @@ const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNext
   const handleOptionClick = (option) => { if (isAnswered) return; setSelectedOption(option); setIsAnswered(true); onAnswerSelect(option); };
   return (
     <div className={`quiz-screen ${isHidden ? 'hidden' : ''}`}>
-      <button onClick={onShowHint} className="top-right-button">Mostrar Dica</button>
+      <button onClick={onShowHint} className="top-right-button">Show hint</button>
       <div className="quiz-content">
         <h1 dangerouslySetInnerHTML={{ __html: formatQuestionText(questionData.questionText) }} />
         <div className="quiz-options">
@@ -101,7 +101,7 @@ const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNext
             return (<button key={index} className={btnClass} onClick={() => handleOptionClick(option)} disabled={isAnswered}>{option}</button>);
           })}
         </div>
-        {isAnswered && (<button onClick={onNextQuestion} className="next-btn">{isLastQuestion ? 'Finalizar Quiz' : 'Próxima Pergunta'}</button>)}
+        {isAnswered && (<button onClick={onNextQuestion} className="next-btn">{isLastQuestion ? 'Finish Quiz' : 'Next Question'}</button>)}
       </div>
     </div>
   );
@@ -126,17 +126,17 @@ export default function TelaQuiz() {
     <div className="quiz-container">
       {/* --- BOTÃO VOLTAR ADICIONADO AQUI --- */}
       <Link to="/" className="back-to-home-button">
-        ← Voltar à Home
+        ← Back to Home Page
       </Link>
 
       {showResults ? (
         <div className="quiz-screen">
           <div className="quiz-content">
-            <h1>Quiz Finalizado!</h1>
-            <p style={{fontSize: '1.5rem', margin: '20px 0'}}>Sua pontuação foi: {score} de {quizData.length}</p>
-            <button onClick={restartQuiz} className="next-btn">Tentar Novamente</button>
+            <h1>Quiz Completed!</h1>
+            <p style={{fontSize: '1.5rem', margin: '20px 0'}}>Your score: {score} out of {quizData.length}</p>
+            <button onClick={restartQuiz} className="next-btn">Try Again</button>
           </div>
-        </div>
+        </div>  
       ) : (
         <>
           <ConstellationHint onGoBack={handleHideHint} isVisible={isHintVisible} graphData={currentQuestion.graphData} hintKeyword={currentQuestion.hintKeyword} />
