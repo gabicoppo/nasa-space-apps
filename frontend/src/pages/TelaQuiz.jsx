@@ -14,7 +14,6 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
       if (cyInstanceRef.current) {
         cyInstanceRef.current.destroy();
       }
-
       const cy = cytoscape({
         container: cyContainerRef.current,
         elements: [ ...graphData.nodes, ...graphData.edges ],
@@ -25,15 +24,14 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
         layout: { name: 'cose', fit: true, padding: 50, idealEdgeLength: 180, nodeRepulsion: 5000, animate: 'end', animationDuration: 1500 },
         zoomingEnabled: true, userZoomingEnabled: true, panningEnabled: true, userPanningEnabled: true, minZoom: 0.5, maxZoom: 2,
       });
-
       cyInstanceRef.current = cy;
-      
       const tooltip = tooltipRef.current;
       cy.on('mouseover', 'node, edge', (event) => { cyContainerRef.current.classList.add('cursor-pointer'); const element = event.target; const description = element.data('description'); if (element.isNode()) { element.style('border-opacity', 0.9); } else { element.style({ 'line-color': '#66fcf1', 'target-arrow-color': '#66fcf1', 'line-opacity': 1 }); } if (description) { tooltip.innerHTML = description; tooltip.style.display = 'block'; } });
       cy.on('mouseout', 'node, edge', (event) => { cyContainerRef.current.classList.remove('cursor-pointer'); const element = event.target; if (element.isNode()) { element.style('border-opacity', 0.5); } else { element.style({ 'line-color': '#45a29e', 'target-arrow-color': '#45a29e', 'line-opacity': 0.7 }); } tooltip.style.display = 'none'; });
       cy.on('mousemove', (event) => { tooltip.style.left = `${event.originalEvent.pageX + 15}px`; tooltip.style.top = `${event.originalEvent.pageY + 15}px`; });
       cy.on('tap', 'node', (evt) => { const node = evt.target; const url = node.data('link'); if (url) { window.open(url, '_blank'); } });
 
+      // --- BARRA DE ZOOM RESTAURADA ---
       const zoomSlider = document.getElementById('zoom-slider');
       const zoomInBtn = document.getElementById('zoom-in');
       const zoomOutBtn = document.getElementById('zoom-out');
@@ -51,22 +49,14 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
         zoomOutBtn.addEventListener('click', zoomOut);
       }
     }
-
-    return () => {
-      if (cyInstanceRef.current) {
-        cyInstanceRef.current.destroy();
-        cyInstanceRef.current = null;
-      }
-    };
+    return () => { if (cyInstanceRef.current) { cyInstanceRef.current.destroy(); cyInstanceRef.current = null; } };
   }, [isVisible, graphData]);
 
   return (
     <div className={`hint-screen ${isVisible ? 'visible' : ''}`}>
       <button onClick={onGoBack} className="top-right-button">Voltar</button>
-      
       <div id="cy" ref={cyContainerRef} />
       <div id="tooltip" ref={tooltipRef} />
-      
       <div id="zoom-controls">
         <span id="zoom-out">-</span>
         <input type="range" id="zoom-slider" />
@@ -79,10 +69,25 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
 const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNextQuestion, isLastQuestion }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
-  useEffect(() => { setSelectedOption(null); setIsAnswered(false); }, [questionData]);
-  const formatQuestionText = (text) => { if (!text) return ''; return text.replace(/__(.*?)__/g, '<u>$1</u>'); };
-  const handleOptionClick = (option) => { if (isAnswered) return; setSelectedOption(option); setIsAnswered(true); onAnswerSelect(option); };
   
+  useEffect(() => {
+    setSelectedOption(null);
+    setIsAnswered(false);
+  }, [questionData]);
+
+  const handleOptionClick = (option) => {
+    if (isAnswered) return;
+    setSelectedOption(option);
+  };
+  
+  const handleConfirmClick = () => {
+    if (!selectedOption) return; // Não faz nada se nenhuma opção for selecionada
+    setIsAnswered(true);
+    onAnswerSelect(selectedOption);
+  };
+  
+  const formatQuestionText = (text) => { if (!text) return ''; return text.replace(/__(.*?)__/g, '<u>$1</u>'); };
+
   return (
     <div className={`quiz-screen ${isHidden ? 'hidden' : ''}`}>
       <div className="quiz-content">
@@ -90,20 +95,31 @@ const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNext
         <div className="quiz-options">
           {questionData.options.map((option, index) => {
             let btnClass = "quiz-option-btn";
-            if (isAnswered) { if (option === questionData.correctAnswer) { btnClass += " correct"; } else if (option === selectedOption) { btnClass += " incorrect"; } }
+            if (isAnswered) {
+              if (option === questionData.correctAnswer) { btnClass += " correct"; } 
+              else if (option === selectedOption) { btnClass += " incorrect"; }
+            } else if (option === selectedOption) {
+                btnClass += " selected"; // Estilo para a opção apenas selecionada
+            }
             return (<button key={index} className={btnClass} onClick={() => handleOptionClick(option)} disabled={isAnswered}>{option}</button>);
           })}
         </div>
         
-        {!isAnswered && (
-             <button onClick={onShowHint} className="hint-button">Conferir no Grafo</button>
-        )}
+        {/* --- NOVA SEÇÃO DE BOTÕES DE AÇÃO --- */}
+        <div className="quiz-actions">
+            <button onClick={onShowHint} className="action-btn hint-btn">Conferir no Grafo</button>
+            
+            {!isAnswered ? (
+                <button onClick={handleConfirmClick} className="action-btn confirm-btn" disabled={!selectedOption}>
+                    Confirmar Resposta
+                </button>
+            ) : (
+                <button onClick={onNextQuestion} className="action-btn next-btn">
+                    {isLastQuestion ? 'Finalizar Quiz' : 'Próxima Pergunta'}
+                </button>
+            )}
+        </div>
 
-        {isAnswered && (
-          <button onClick={onNextQuestion} className="next-btn">
-            {isLastQuestion ? 'Finalizar Quiz' : 'Próxima Pergunta'}
-          </button>
-        )}
       </div>
     </div>
   );
@@ -125,12 +141,7 @@ export default function TelaQuiz() {
   
   const handleHideHint = () => {
     setIsHintVisible(false);
-    
-    // --- ALTERAÇÃO APLICADA AQUI ---
-    // Agenda o reaparecimento do botão após 0.75 segundos
-    setTimeout(() => {
-      setIsHomeButtonVisible(true);
-    }, 750); // 750ms = 0.75 segundos
+    setTimeout(() => { setIsHomeButtonVisible(true); }, 750);
   };
 
   const handleAnswerSelect = (selectedAnswer) => { if (selectedAnswer === currentQuestion.correctAnswer) { setScore(score + 1); } };
@@ -148,7 +159,7 @@ export default function TelaQuiz() {
           <div className="quiz-content">
             <h1>Quiz Finalizado!</h1>
             <p style={{fontSize: '1.5rem', margin: '20px 0'}}>Sua pontuação foi: {score} de {quizData.length}</p>
-            <button onClick={restartQuiz} className="next-btn">Tentar Novamente</button>
+            <button onClick={restartQuiz} className="action-btn confirm-btn">Tentar Novamente</button>
           </div>
         </div>
       ) : (

@@ -23,6 +23,7 @@
 }
 .quiz-content {
     max-width: 700px;
+    width: 90%;
     text-align: center;
     padding: 20px;
 }
@@ -53,39 +54,71 @@
     transition: all 0.2s;
 }
 .quiz-option-btn:hover:not(:disabled) { background-color: #e0e0e0; border-color: #ccc; }
+.quiz-option-btn.selected { border-color: #3498db; background-color: #eaf5ff; }
 .quiz-option-btn.correct { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
 .quiz-option-btn.incorrect { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
 .quiz-option-btn:disabled { cursor: default; }
-.next-btn {
-    margin-top: 30px;
-    padding: 15px 40px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-}
+
 .quiz-screen.hidden {
     transform: translateY(100%);
 }
 
-.hint-button {
+/* --- NOVA ÁREA DE BOTÕES DE AÇÃO --- */
+.quiz-actions {
     margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.action-btn {
     padding: 12px 28px;
     font-size: 1rem;
     font-weight: bold;
-    color: #fff;
-    background-color: #333;
-    border: 1px solid #555;
+    border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease-in-out;
 }
-.hint-button:hover {
-    background-color: #555;
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
+.action-btn:disabled {
+    cursor: not-allowed;
+    background-color: #ccc !important;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Botão Conferir Grafo (Azul) */
+.hint-btn {
+    color: #fff;
+    background-color: #007bff;
+}
+.hint-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Botão Confirmar Resposta (Cinza) */
+.confirm-btn {
+    color: #fff;
+    background-color: #6c757d;
+}
+.confirm-btn:hover:not(:disabled) {
+    background-color: #5a6268;
+}
+
+/* Botão Próxima Pergunta (Preto) */
+.next-btn {
+    color: #fff;
+    background-color: #212529;
+}
+.next-btn:hover {
+    background-color: #424649;
+}
+
 
 .hint-screen {
     width: 100%;
@@ -112,6 +145,7 @@
     font-weight: bold;
     cursor: pointer;
     text-decoration: none;
+    transition: opacity 1s ease-in-out, all 0.3s ease;
 }
 .top-right-button {
     right: 20px;
@@ -119,7 +153,6 @@
     color: white;
     border: 1px solid #555;
     z-index: 20;
-    transition: all 0.3s ease;
 }
 .back-to-home-button {
     left: 20px;
@@ -128,8 +161,6 @@
     color: #555;
     z-index: 15;
     opacity: 1;
-    /* --- ALTERAÇÃO APLICADA AQUI --- */
-    transition: opacity 1s ease-in-out; /* Fade-in de 1 segundo */
 }
 .back-to-home-button:hover {
     background-color: #f0f0f0;
