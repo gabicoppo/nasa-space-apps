@@ -7,6 +7,7 @@ import TelaMissao from "./pages/TelaMissao";
 import SobreProjeto from "./pages/SobreProjeto";
 import HomePage from "./pages/HomePage";
 import TelaQuiz from "./pages/TelaQuiz";
+
 import GlobalStyles from "./GlobalStyles";
 
 function App() {
@@ -32,7 +33,7 @@ function App() {
         rel="stylesheet"
       />
 
-      {/* Background layers */}
+      {/* Fundo estrelado gerenciado globalmente aqui */}
       <div className="stars" aria-hidden="true" />
       <div className="twinkling" aria-hidden="true" />
       <div className="planet-earth" aria-hidden="true" />
@@ -40,19 +41,16 @@ function App() {
       <Router>
         <main className="app-main" role="main">
           <Routes>
-            {/* Rota principal "/" renderiza a HomePage (com os botões de escolha) */}
             <Route path="/" element={<HomePage />} />
 
-            {/* Rota "/quiz" renderiza a TelaQuiz */}
-            <Route path="/quiz" element={<TelaQuiz />} />
-
-            {/* Rota "/telamissao" renderiza a TelaMissao */}
             <Route path="/telamissao" element={<TelaMissao />} />
 
-            {/* Rota "/telainicial" renderiza a TelaInicial (search) */}
-            <Route path="/telainicial" element={<TelaInicial />} />
+            <Route path="/quiz" element={<TelaQuiz />} />
+              
+            <Route path="/telamissao" element={<TelaMissao />} />
 
-            {/* Rota "/telainicial" renderiza a TelaInicial (search) */}
+            <Route path="/telainicial" element={<TelaInicial />} />
+              
             <Route path="/sobreprojeto" element={<SobreProjeto />} />
           </Routes>
         </main>

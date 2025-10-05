@@ -4,56 +4,48 @@ import OpenAI from 'openai';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import fs from 'fs/promises';
 
-// ──────────────────────────────
-// Setup
-// ──────────────────────────────
-const BATCH_SIZE = 100; // Pinecone recommends batching upserts
+const BATCH_SIZE = 100;
 
-// Initialize clients
 const pc = new Pinecone({
     apiKey: process.env.PINECONE_API_KEY || '',
 });
 const openai = new OpenAI();
+const pineconeIndexName = process.env.PINECONE_INDEX_NAME || 'nasa';
 
-/**
- * Loads and processes articles, then upserts them into Pinecone.
- */
 async function runIngestion() {
     console.log('🔹 Initializing Pinecone index...');
 
-    const index = pc.index(process.env.PINECONE_INDEX_NAME || 'nasa');
+    const index = pc.index(pineconeIndexName);
 
-    // 2. Load Articles
     let articles;
     try {
-        const data = await fs.readFile('articles.json', 'utf-8');
+        const data = await fs.readFile('scripts/in/articles.json', 'utf-8');
         articles = JSON.parse(data);
     } catch (error) {
         console.error("❌ Error reading or parsing articles.json:", error);
         return;
     }
 
-    // Limit to the first 5 articles, matching the Python script
-    const articlesToProcess = articles.slice(0, 5); 
+    const articlesToProcess = articles.slice(0, 20); 
 
-    // Initialize list for all vectors (Pinecone format)
     let vectors = [];
     let chunkCounter = 0;
 
-    // 3. Process each article
     for (let i = 0; i < articlesToProcess.length; i++) {
         const article = articlesToProcess[i];
         const title = article.title || `Untitled-${i}`;
         const url = article.url || 'unknown';
 
-        // Split into chunks
         const textSplitter = new RecursiveCharacterTextSplitter({
-            chunkSize: 1500,
-            chunkOverlap: 300,
+            chunkSize: 2000,
+            chunkOverlap: 400,
         });
-        const chunks = await textSplitter.splitText(article.content);
 
-        // Embed chunks
+        const fullText = article.content;
+        const cutoff = Math.min(50000, Math.floor(0.7 * fullText.length));
+        const text = fullText.substring(0, cutoff);
+        const chunks = await textSplitter.splitText(text);
+
         for (let j = 0; j < chunks.length; j++) {
             const chunk = chunks[j];
 
@@ -66,7 +58,6 @@ async function runIngestion() {
                 });
                 const embedding = res.data[0].embedding;
 
-                // Prepare for Pinecone upsert
                 vectors.push({
                     id: `chunk-${chunkCounter}`,
                     values: embedding,
@@ -75,7 +66,7 @@ async function runIngestion() {
                         title: title,
                         url: url,
                         chunk_index: j,
-                        text: chunk, // Store text in metadata for RAG retrieval
+                        text: chunk,
                     },
                 });
                 chunkCounter++;
@@ -84,9 +75,7 @@ async function runIngestion() {
             }
         }
     }
-
     
-    // 4. Store in Pinecone (Upsert in Batches)
     console.log(`\n🔹 Upserting ${vectors.length} vectors into Pinecone...`);
     
     for (let i = 0; i < vectors.length; i += BATCH_SIZE) {
@@ -99,7 +88,7 @@ async function runIngestion() {
         }
     }
 
-    console.log(`\n✅ Stored ${vectors.length} chunks from ${articlesToProcess.length} articles into Pinecone index: ${PINECONE_INDEX_NAME}`);
+    console.log(`\n✅ Stored ${vectors.length} chunks from ${articlesToProcess.length} articles into Pinecone index: ${pineconeIndexName}`);
 }
 
 runIngestion().catch(console.error);
