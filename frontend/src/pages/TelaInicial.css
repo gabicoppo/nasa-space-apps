@@ -1,5 +1,13 @@
 /* TelaInicial.css */
 
+/*
+  💡 BEST PRACTICE: Add box-sizing to prevent padding and borders
+     from breaking your layout. This is a universal reset.
+*/
+* {
+  box-sizing: border-box;
+}
+
 /* Container Principal */
 .tela-inicial {
   height: 100vh;
@@ -37,19 +45,29 @@
   animation: fade-in-up 1s ease-out;
 }
 
-/* Formulário de Busca - AMPLIADO */
+/* Formulário de Busca */
 .search-form {
   width: 100%;
   max-width: 56rem;
+  /* ✅ CRITICAL FIX: Prevents the form from overflowing in Firefox */
+  min-width: 0;
   animation: fade-in-up 1.2s ease-out, pulse-glow 3s ease-in-out infinite;
+  
+  /* Firefox compatibility */
+  display: block;
+  margin: 0 auto;
 }
 
 .search-form__container {
   position: relative;
   filter: drop-shadow(0 0 30px rgba(168, 85, 247, 0.4));
+  
+  /* Firefox layout fixes */
+  display: block;
+  width: 100%;
 }
 
-/* Ícone de Busca - MAIOR */
+/* Ícone de Busca */
 .search-form__icon {
   position: absolute;
   left: 1.75rem;
@@ -61,18 +79,59 @@
   height: 1.75rem;
 }
 
-/* Input de Busca - MUITO MAIOR */
+/* Input de Busca */
 .search-form__input {
   width: 100%;
   padding: 1.75rem 8rem 1.75rem 4.5rem;
-  border-radius: 9999px;
+  border-radius: 50px; /* Firefox handles large border-radius poorly, use fixed value */
   font-size: 1.375rem;
   color: #ffffff;
-  background: rgba(0, 0, 0, 0.6);
+  
+  /* Strong fallback background for all browsers */
+  background: rgba(15, 23, 42, 0.95);
+  
+  /*
+    💡 FIREFOX FIX: backdrop-filter isn't fully supported in older Firefox versions
+       Use @supports to provide fallback styling
+  */
+  -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
+
   border: 2px solid #374151;
   transition: all 0.3s ease-in-out;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  
+  /* Firefox-specific fixes */
+  -moz-appearance: none;
+  appearance: none;
+  flex-shrink: 0;
+  min-width: 0; /* Firefox flexbox fix */
+  
+  /* Force hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(16px)) {
+  .search-form__input {
+    background: rgba(15, 23, 42, 0.98) !important;
+    border-color: #4b5563;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Firefox-specific overrides */
+@-moz-document url-prefix() {
+  .search-form__input {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border: 2px solid #4b5563;
+    border-radius: 50px;
+  }
+  
+  .search-form__button {
+    border-radius: 50px;
+  }
 }
 
 .search-form__input::placeholder {
@@ -88,7 +147,7 @@
   background: rgba(0, 0, 0, 0.7);
 }
 
-/* Botão de Busca - MAIOR E MAIS DESTACADO */
+/* Botão de Busca */
 .search-form__button {
   position: absolute;
   right: 0.75rem;
@@ -98,12 +157,17 @@
   font-weight: 700;
   font-size: 1.125rem;
   padding: 0.875rem 2.5rem;
-  border-radius: 9999px;
+  border-radius: 50px; /* Firefox-compatible border radius */
   background: linear-gradient(90deg, #9333ea 0%, #06b6d4 100%);
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 16px rgba(6, 182, 212, 0.4);
+  
+  /* Firefox fixes */
+  -moz-appearance: none;
+  appearance: none;
+  white-space: nowrap; /* Prevent text wrapping */
 }
 
 .search-form__button:hover {
@@ -136,72 +200,60 @@
   }
 }
 
-/* Responsive */
+/* Responsive Styles (No changes needed here) */
 @media (max-width: 1024px) {
   .search-form {
     max-width: 48rem;
   }
-
   .search-form__input {
     padding: 1.5rem 7rem 1.5rem 4rem;
     font-size: 1.25rem;
   }
-
   .search-form__button {
     padding: 0.75rem 2.25rem;
     font-size: 1rem;
   }
 }
-
 @media (max-width: 768px) {
   .tela-inicial__title {
     font-size: 2.5rem;
     letter-spacing: 0.05em;
     margin-bottom: 0.5rem;
   }
-
   .tela-inicial__subtitle {
     font-size: 1rem;
     margin-bottom: 2.5rem;
   }
-
   .search-form {
     max-width: 100%;
   }
-
   .search-form__input {
     padding: 1.25rem 5.5rem 1.25rem 3.5rem;
     font-size: 1.125rem;
   }
-
   .search-form__icon {
     left: 1.25rem;
     width: 1.5rem;
     height: 1.5rem;
   }
-
   .search-form__button {
     padding: 0.625rem 1.75rem;
     font-size: 0.9rem;
   }
 }
-
 @media (max-width: 480px) {
   .tela-inicial {
     padding: 0.5rem;
   }
-
   .search-form__input {
     padding: 1rem 4.5rem 1rem 3rem;
     font-size: 1rem;
   }
-
   .search-form__icon {
     left: 1rem;
     width: 1.25rem;
     height: 1.25rem;
   }
-
   .search-form__button {
     padding: 0.5rem 1.5rem;
     font-size: 0.85rem;

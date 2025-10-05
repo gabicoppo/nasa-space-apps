@@ -6,7 +6,7 @@ export async function queryBuildKG(query : string) {
         console.log(body)
         const res = await api.post("api/actions/buildKGFromQuery", body)
         console.log(res)
-        return res.data
+        return res
     } catch (error) {
         console.error("Error:", error);
         // return error
