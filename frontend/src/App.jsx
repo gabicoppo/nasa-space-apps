@@ -1,6 +1,5 @@
 // App.jsx
 import React, { useState, useCallback } from "react";
-
 import "./App.css";
 import "./index.css";
 import TelaInicial from "./pages/TelaInicial";
@@ -30,12 +29,11 @@ const LandingSequence = React.memo(({ onStartMission }) => {
         aria-label="Mission Information"
       >
         <p className="info-text fade-in-up delay-200">
-          Our mission is to bring NASA’s biological data directly to your
-          fingertips,
+          Our mission is to make NASA's bioscience research more accessible and democratize
+          knowledge,
         </p>
         <p className="info-text highlight fade-in-up delay-500">
-          revealing connections that will shape humanity’s next journey to the
-          stars.
+          bringing NASA’s biological data directly to your fingertips.
         </p>
       </section>
 
@@ -89,6 +87,7 @@ function App() {
   }, []);
 
   return (
+
     <>
       <GlobalStyles />
       <link
