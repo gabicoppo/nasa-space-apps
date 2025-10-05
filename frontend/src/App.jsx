@@ -51,7 +51,7 @@ function App() {
 
             <Route path="/telainicial" element={<TelaInicial />} />
               
-            <Route path="/sobreprojeto" element={<SobreProjeto />} />
+            {/* <Route path="/sobreprojeto" element={<SobreProjeto />} /> */}
           </Routes>
         </main>
       </Router>
