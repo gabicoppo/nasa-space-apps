@@ -6,7 +6,7 @@ import "../App.css";
 import "../index.css";
 // Se você realmente precisa de estilos da tela inicial, mantenha; caso não, pode remover:
 import "./TelaInicial.css";
-import astronautaImg from "../assets/apresentacaoastronauta.png"
+import astronautaImg from "../assets/apresentacaoastronauta.png";
 import SobreProjeto from "./SobreProjeto";
 
 const TelaMissao = ({ onBack, onComplete }) => {
@@ -15,6 +15,7 @@ const TelaMissao = ({ onBack, onComplete }) => {
   const [showQuizButton, setShowQuizButton] = useState(false);
   const [showSobre, setShowSobre] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
 
   const fullText = "Greetings, crew member! I need your help with a space mission. You will have to answer a series of difficult questions. But don't worry - the stars will help you find the right path!";
 
@@ -41,10 +42,14 @@ const TelaMissao = ({ onBack, onComplete }) => {
   // Ação para avançar: se onComplete foi passado, respeita; senão, mostra a tela SobreProjeto aqui
   const goNext = () => {
     if (typeof onComplete === "function") {
-      onComplete();
-    } else {
-      setShowSobre(true);
+      try {
+        onComplete();
+      } catch (err) {
+        // ignore
+      }
     }
+    // navigate to the SobreProjeto route
+    navigate('/sobreprojeto');
   };
 
   // Espaço/Enter avançam
@@ -54,10 +59,9 @@ const TelaMissao = ({ onBack, onComplete }) => {
       const isSpace =
         e.key === " " || e.key === "Space" || e.key === "Spacebar" ||
         e.code === "Space" || e.keyCode === 32;
-
-      if ((isEnter || isSpace) && typeof onComplete === "function") {
+      if (isEnter || isSpace) {
         e.preventDefault();
-        onComplete();
+        goNext();
       }
     };
 
@@ -88,9 +92,7 @@ const TelaMissao = ({ onBack, onComplete }) => {
   };
 
   // Se o usuário avançou, renderiza a tela SobreProjeto inline (mantém o botão de voltar)
-  if (showSobre) {
-    return <SobreProjeto onBack={() => setShowSobre(false)} />;
-  }
+  // render normal mission screen
   return (
     <main className="tela-missao">
       <button onClick={onBack} className="back-button">
@@ -106,27 +108,14 @@ const TelaMissao = ({ onBack, onComplete }) => {
         </div>
         <div className="right-panel">
           <div className="text-box" style={{ minHeight: "80px" }}>
-            <p className="typing-text">
-              {displayText}
-              {currentIndex < fullText.length && <span className="caret"></span>}
-            </p>
-          </div>
-          <div className="text-box" style={{ minHeight: "80px" }}>
             <p className="typing-text">{renderTypingText()}</p>
           </div>
 
           {/* Botão extra para avançar manualmente a qualquer momento */}
           <div className="actions">
             <button className="next-button" onClick={goNext}>
-              Pressione Espaço/Enter ou clique aqui →
+              Next →
             </button>
-
-            <div className="actions">
-              <button className="next-button" onClick={onComplete}>
-                Next →
-              </button>
-            </div>
-
           </div>
         </div>
       </div>

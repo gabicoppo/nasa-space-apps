@@ -51,6 +51,9 @@ function App() {
 
             {/* Rota "/telainicial" renderiza a TelaInicial (search) */}
             <Route path="/telainicial" element={<TelaInicial />} />
+
+            {/* Rota "/telainicial" renderiza a TelaInicial (search) */}
+            <Route path="/sobreprojeto" element={<SobreProjeto />} />
           </Routes>
         </main>
       </Router>
