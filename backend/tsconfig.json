@@ -5,7 +5,7 @@
     "moduleResolution": "nodenext",
     "lib": ["ES2020"],
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".", // ✅ FIX: Set the root to the project's base directory
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -14,9 +14,10 @@
     "declaration": true,
     "sourceMap": true,
     "removeComments": true,
+    "allowJs": true,
     "types": ["node"],
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "include": ["src/**/*", "rag.js"],
+  "include": ["src/**/*", "scripts/**/*"],
   "exclude": ["node_modules", "dist"]
 }

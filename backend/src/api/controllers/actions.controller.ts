@@ -49,7 +49,7 @@ export class ActionsController {
                 return res.status(400).json({ error: "Query is required" });
             }
 
-            const result: QueryResultContext[] = await PineconeService.query(query, 5);
+            const result: QueryResultContext[] = await PineconeService.query(query, 4);
 
             let combinedText = '';
             for (const chunk of result) {
