@@ -5,8 +5,6 @@ import "../index.css";        // ⬅️ Sobe um nível para src/
 import { queryBuildKG } from "@/services/apiServices";
 
 const TelaInicial = ({ onStartQuiz }) => {
-//const TelaInicial = () => {
-
     const [input, setInput] = useState("")
     const [result, setResult] = useState("");
     const [loading, setLoading] = useState(false);
