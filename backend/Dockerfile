@@ -32,8 +32,8 @@ RUN npm install --omit=dev
 # Copy the compiled JavaScript code from the 'builder' stage
 COPY --from=builder /app/dist ./dist
 
-# Expose the port your app runs on (change 3000 if necessary)
-EXPOSE 3000
+# server.ts
+EXPOSE 3001
 
 # The command to start the application
 CMD [ "node", "dist/server.js" ]
