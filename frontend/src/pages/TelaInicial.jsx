@@ -1,75 +1,99 @@
-import React, { useState } from "react";
-import "./TelaInicial.css";  // ✅ Correto (mesmo diretório)
-import "../App.css";          // ⬅️ Sobe um nível para src/
-import "../index.css";        // ⬅️ Sobe um nível para src/
-import { queryBuildKG } from "@/services/apiServices";
+import React, { useState } from 'react';
+import GlobalStyles from '@/GlobalStyles';
+import './TelaInicial.css';
+import '../App.css';
+import '../index.css';
+import { queryBuildKG } from '@/services/apiServices';
 
-const TelaInicial = ({ onStartQuiz }) => {
-    const [input, setInput] = useState("")
-    const [result, setResult] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+const TelaInicial = () => {
+  const [input, setInput] = useState('');
+  const [result, setResult] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await queryBuildKG(input);
-            setResult(response.message || JSON.stringify(response));
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-    
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    setLoading(true);
+    setError('');
+    setResult('');
+
+    try {
+      await queryBuildKG(input);
+      setResult('Search completed! Your query has been processed successfully.');
+    } catch (err) {
+      setError(err.message || 'An error occurred during the search');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <main className="tela-inicial">
-        
-        {/* Título Principal */}
-        <h1 className="tela-inicial__title">
-            BioAstra Navigator
-        </h1>
+    <>
+      <GlobalStyles />
+      <div className="stars"></div>
+      <div className="twinkling"></div>
+      <div className="planet-earth"></div>
 
-        {/* Subtítulo */}
+      <main className="tela-inicial">
+        <h1 className="tela-inicial__title">Stellar Search</h1>
+
         <p className="tela-inicial__subtitle">
-            Ask anything to your NASA Superpower for Biological Data.
+          Ask anything to your NASA Superpower for Biological Data.
         </p>
 
-        {/* Formulário de Busca */}
         <form onSubmit={handleSubmit} className="search-form">
-            <div className="search-form__container">
-                <div className="search-form__icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                </div>
-                <input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    type="search"
-                    className="search-form__input"
-                    placeholder="Explore exoplanets, missions, data..."
-                />
-                <button 
-                    type="submit" 
-                    className="search-form__button"
-                    disabled={loading}
-                >
-                    {loading ? "Sending..." : "Search"}
-                </button>
+          <div className="search-form__container">
+            <div className="search-form__icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
             </div>
-            {result && <p className="text-green-600">Response: {result}</p>}
-            {error && <p className="text-red-600">Error: {error}</p>}
-        </form>
 
-        {/* Botão para iniciar a missão */}
-        <button onClick={onStartQuiz} className="mission-button">
-            Iniciar Missão Espacial
-        </button>
-    </main>
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              type="search"
+              className="search-form__input"
+              placeholder="Explore exoplanets, missions, data..."
+              disabled={loading}
+            />
+
+            <button
+              type="submit"
+              className="search-form__button"
+              disabled={loading}
+            >
+              {loading ? 'Sending...' : 'Search'}
+            </button>
+          </div>
+
+          {result && (
+            <div className="result-message success">
+              <strong>Response:</strong> {result}
+            </div>
+          )}
+
+          {error && (
+            <div className="result-message error">
+              <strong>Error:</strong> {error}
+            </div>
+          )}
+        </form>
+      </main>
+    </>
   );
 };
 

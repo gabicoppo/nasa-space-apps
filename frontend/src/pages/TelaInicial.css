@@ -1,6 +1,5 @@
-/* TelaInicial.css */
+/* TelaInicial.css - Firefox Compatible */
 
-/* Container Principal */
 .tela-inicial {
   height: 100vh;
   width: 100%;
@@ -12,9 +11,9 @@
   padding: 1rem;
   position: relative;
   z-index: 10;
+  overflow-x: hidden;
 }
 
-/* Título Principal */
 .tela-inicial__title {
   font-size: clamp(2.5rem, 6vw, 5.5rem);
   font-weight: 800;
@@ -23,37 +22,9 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   text-shadow: 0 0 18px rgba(0, 255, 255, 0.8);
-  animation: fade-in-up 0.8s ease-out;
+  animation: fadeInUp 0.8s ease-out;
 }
 
-/* Botão de Missão */
-.mission-button {
-    margin-top: 2rem;
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    color: #ffffff;
-    background: rgba(0, 255, 255, 0.1);
-    border: 2px solid rgba(0, 255, 255, 0.5);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 600;
-}
-
-.mission-button:hover {
-    background: rgba(0, 255, 255, 0.2);
-    border-color: rgba(0, 255, 255, 0.8);
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-    transform: translateY(-2px);
-}
-
-.mission-button:active {
-    transform: translateY(0);
-}
-
-/* Subtítulo */
 .tela-inicial__subtitle {
   font-size: clamp(1rem, 2.5vw, 1.5rem);
   color: #67e8f9;
@@ -61,22 +32,26 @@
   max-width: 50rem;
   font-weight: 500;
   letter-spacing: 0.025em;
-  animation: fade-in-up 1s ease-out;
+  animation: fadeInUp 1s ease-out;
 }
 
-/* Formulário de Busca - AMPLIADO */
+/* Search Form */
 .search-form {
   width: 100%;
   max-width: 56rem;
-  animation: fade-in-up 1.2s ease-out, pulse-glow 3s ease-in-out infinite;
+  min-width: 0;
+  display: block;
+  margin: 0 auto;
+  animation: fadeInUp 1.2s ease-out, pulse-glow 3s ease-in-out infinite;
 }
 
 .search-form__container {
   position: relative;
+  display: block;
+  width: 100%;
   filter: drop-shadow(0 0 30px rgba(168, 85, 247, 0.4));
 }
 
-/* Ícone de Busca - MAIOR */
 .search-form__icon {
   position: absolute;
   left: 1.75rem;
@@ -86,25 +61,31 @@
   pointer-events: none;
   width: 1.75rem;
   height: 1.75rem;
+  z-index: 2;
 }
 
-/* Input de Busca - MUITO MAIOR */
 .search-form__input {
   width: 100%;
   padding: 1.75rem 8rem 1.75rem 4.5rem;
-  border-radius: 9999px;
+  border-radius: 50px;
   font-size: 1.375rem;
   color: #ffffff;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(16px);
-  border: 2px solid #374151;
+  background: rgba(15, 23, 42, 0.97);
+  border: 2px solid #4b5563;
   transition: all 0.3s ease-in-out;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  flex-shrink: 0;
+  min-width: 0;
+  font-family: inherit;
 }
 
 .search-form__input::placeholder {
   color: #9ca3af;
   font-weight: 400;
+  opacity: 1;
 }
 
 .search-form__input:focus {
@@ -112,10 +93,9 @@
   border-color: #a855f7;
   box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.2),
               0 8px 32px rgba(168, 85, 247, 0.4);
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
 }
 
-/* Botão de Busca - MAIOR E MAIS DESTACADO */
 .search-form__button {
   position: absolute;
   right: 0.75rem;
@@ -125,35 +105,58 @@
   font-weight: 700;
   font-size: 1.125rem;
   padding: 0.875rem 2.5rem;
-  border-radius: 9999px;
+  border-radius: 50px;
   background: linear-gradient(90deg, #9333ea 0%, #06b6d4 100%);
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 16px rgba(6, 182, 212, 0.4);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  white-space: nowrap;
+  font-family: inherit;
+  z-index: 2;
 }
 
-.search-form__button:hover {
+.search-form__button:hover:not(:disabled) {
   transform: translateY(-50%) scale(1.08);
   box-shadow: 0 6px 24px rgba(6, 182, 212, 0.6);
 }
 
-.search-form__button:active {
+.search-form__button:active:not(:disabled) {
   transform: translateY(-50%) scale(1.02);
 }
 
-/* Animações */
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.search-form__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
+/* Result Messages */
+.result-message {
+  margin-top: 2rem;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.125rem;
+  max-width: 56rem;
+  width: 100%;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.result-message.success {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+.result-message.error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+/* Animations */
 @keyframes pulse-glow {
   0%, 100% {
     filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.3));
@@ -168,12 +171,10 @@
   .search-form {
     max-width: 48rem;
   }
-
   .search-form__input {
     padding: 1.5rem 7rem 1.5rem 4rem;
     font-size: 1.25rem;
   }
-
   .search-form__button {
     padding: 0.75rem 2.25rem;
     font-size: 1rem;
@@ -186,27 +187,22 @@
     letter-spacing: 0.05em;
     margin-bottom: 0.5rem;
   }
-
   .tela-inicial__subtitle {
     font-size: 1rem;
     margin-bottom: 2.5rem;
   }
-
   .search-form {
     max-width: 100%;
   }
-
   .search-form__input {
     padding: 1.25rem 5.5rem 1.25rem 3.5rem;
     font-size: 1.125rem;
   }
-
   .search-form__icon {
     left: 1.25rem;
     width: 1.5rem;
     height: 1.5rem;
   }
-
   .search-form__button {
     padding: 0.625rem 1.75rem;
     font-size: 0.9rem;
@@ -217,18 +213,15 @@
   .tela-inicial {
     padding: 0.5rem;
   }
-
   .search-form__input {
     padding: 1rem 4.5rem 1rem 3rem;
     font-size: 1rem;
   }
-
   .search-form__icon {
     left: 1rem;
     width: 1.25rem;
     height: 1.25rem;
   }
-
   .search-form__button {
     padding: 0.5rem 1.5rem;
     font-size: 0.85rem;

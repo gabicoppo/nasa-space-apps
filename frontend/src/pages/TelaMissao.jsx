@@ -1,30 +1,36 @@
 // src/pages/TelaMissao.jsx
 import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./TelaMissao.css";
 import "../App.css";
 import "../index.css";
+// Se você realmente precisa de estilos da tela inicial, mantenha; caso não, pode remover:
+import "./TelaInicial.css";
 import astronautaImg from "../assets/Imagem-astronauta2.png";
 
 const TelaMissao = ({ onBack, onComplete }) => {
+  const navigate = useNavigate();
+
   const [displayText, setDisplayText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
+  const [showQuizButton, setShowQuizButton] = useState(false);
 
   const fullText =
-    "Grreetings, crew member! I need your help with a space mission. You will have to answer a series of difficult questions. But don’t worry—the stars will help you find the right path!";
+    "Saudações, tripulante! Preciso da sua ajuda com uma missão espacial. Você deverá responder uma série de 3 perguntas envolvendo biologia e espaço! Quando passar o mouse sobre as estrelas acima de cada pergunta, você receberá dicas valiosas.";
 
   // Digitação do texto
   useEffect(() => {
-    let currentIndex = 0;
-    const typingInterval = setInterval(() => {
-      if (currentIndex < fullText.length) {
-        setDisplayText((prev) => prev + fullText[currentIndex]);
-        currentIndex++;
+    let i = 0;
+    const id = setInterval(() => {
+      if (i < fullText.length) {
+        setDisplayText((prev) => prev + fullText[i]);
+        i++;
       } else {
-        clearInterval(typingInterval);
+        clearInterval(id);
+        setShowQuizButton(true);
       }
     }, 20);
-
-    return () => clearInterval(typingInterval);
+    return () => clearInterval(id);
   }, []);
 
   // Blink do cursor
@@ -33,40 +39,43 @@ const TelaMissao = ({ onBack, onComplete }) => {
     return () => clearInterval(id);
   }, []);
 
-  // Garante que nenhuma input capture as teclas
+  // Evita que algum input capture as teclas
   useEffect(() => {
     requestAnimationFrame(() => {
-      if (document.activeElement && typeof document.activeElement.blur === "function") {
-        document.activeElement.blur();
-      }
+      document.activeElement?.blur?.();
     });
   }, []);
 
-  // Atalho de teclado: Espaço ou Enter -> próxima página
+  // Ação para avançar
+  const goNext = () => {
+    if (typeof onComplete === "function") {
+      onComplete();
+    } else {
+      navigate("/quiz");
+    }
+  };
+
+  // Espaço/Enter avançam
   useEffect(() => {
     const handleKeyDown = (e) => {
       const isEnter = e.key === "Enter" || e.code === "Enter" || e.keyCode === 13;
       const isSpace =
-        e.key === " " ||
-        e.key === "Space" ||
-        e.key === "Spacebar" ||
-        e.code === "Space" ||
-        e.keyCode === 32;
+        e.key === " " || e.key === "Space" || e.key === "Spacebar" ||
+        e.code === "Space" || e.keyCode === 32;
 
-      if ((isEnter || isSpace) && typeof onComplete === "function") {
-        e.preventDefault(); // evita scroll
-        onComplete();
+      if (isEnter || isSpace) {
+        e.preventDefault();
+        goNext();
       }
     };
 
-    // passive:false para permitir preventDefault em Space
     window.addEventListener("keydown", handleKeyDown, { passive: false });
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onComplete]);
+  }, []); // goNext é estável
 
-  // Renderiza texto mostrando cursor apenas no último caractere
+  // Renderiza texto com cursor apenas no último caractere
   const renderTypingText = () => {
-    if (!displayText) return null;
+    if (!displayText) return showCursor ? "|" : ""; // nunca undefined
     const lastChar = displayText.slice(-1);
     const rest = displayText.slice(0, -1);
 
@@ -88,9 +97,12 @@ const TelaMissao = ({ onBack, onComplete }) => {
 
   return (
     <main className="tela-missao">
-      <button onClick={onBack} className="back-button">
-        ← Voltar
-      </button>
+      {/* Voltar: usa onBack se vier por props; caso contrário, linka para a home */}
+      {typeof onBack === "function" ? (
+        <button onClick={onBack} className="back-button">← Voltar</button>
+      ) : (
+        <Link to="/" className="back-button">← Voltar</Link>
+      )}
 
       <div className="content-container">
         <div className="spacecraft-container">
@@ -103,11 +115,18 @@ const TelaMissao = ({ onBack, onComplete }) => {
 
         <div className="text-box" style={{ minHeight: "80px" }}>
           <p className="typing-text">{renderTypingText()}</p>
+
+          {/* Botão aparece ao final da digitação */}
+          {showQuizButton && (
+            <Link to="/quiz" className="start-quiz-button">
+              Iniciar Missão (Quiz)
+            </Link>
+          )}
         </div>
 
-        {/* Botão opcional para avançar com clique/touch */}
+        {/* Botão extra para avançar manualmente a qualquer momento */}
         <div className="actions">
-          <button className="next-button" onClick={onComplete}>
+          <button className="next-button" onClick={goNext}>
             Pressione Espaço/Enter ou clique aqui →
           </button>
         </div>
