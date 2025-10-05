@@ -3,6 +3,7 @@ import "./TelaInicial.css";  // ✅ Correto (mesmo diretório)
 import "../App.css";          // ⬅️ Sobe um nível para src/
 import "../index.css";        // ⬅️ Sobe um nível para src/
 
+const TelaInicial = ({ onStartQuiz }) => {
 import { queryBuildKG } from "@/services/apiServices";
 
 const TelaInicial = () => {
@@ -31,7 +32,7 @@ const TelaInicial = () => {
         
         {/* Título Principal */}
         <h1 className="tela-inicial__title">
-            Stellar Search
+            BioAstra Navigator
         </h1>
 
         {/* Subtítulo */}
@@ -66,6 +67,11 @@ const TelaInicial = () => {
             {result && <p className="text-green-600">Response: {result}</p>}
             {error && <p className="text-red-600">Error: {error}</p>}
         </form>
+
+        {/* Botão para iniciar a missão */}
+        <button onClick={onStartQuiz} className="mission-button">
+            Iniciar Missão Espacial
+        </button>
     </main>
   );
 };
