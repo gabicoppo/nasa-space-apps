@@ -3,8 +3,8 @@ import "./TelaInicial.css";  // ✅ Correto (mesmo diretório)
 import "../App.css";          // ⬅️ Sobe um nível para src/
 import "../index.css";        // ⬅️ Sobe um nível para src/
 
-const TelaInicial = ({ onStartQuiz }) => {
-import { queryBuildKG } from "@/services/apiServices";
+//const TelaInicial = ({ onStartQuiz }) => {
+//import { queryBuildKG } from "@/services/apiServices";
 
 const TelaInicial = () => {
 
