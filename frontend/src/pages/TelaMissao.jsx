@@ -6,7 +6,8 @@ import "../App.css";
 import "../index.css";
 // Se você realmente precisa de estilos da tela inicial, mantenha; caso não, pode remover:
 import "./TelaInicial.css";
-import astronautaImg from "../assets/Imagem-astronauta2.png";
+import astronautaImg from "../assets/apresentacaoastronauta.png"
+import SobreProjeto from "./SobreProjeto";
 
 const TelaMissao = ({ onBack, onComplete }) => {
   const navigate = useNavigate();
@@ -14,9 +15,10 @@ const TelaMissao = ({ onBack, onComplete }) => {
   const [displayText, setDisplayText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
   const [showQuizButton, setShowQuizButton] = useState(false);
+  const [showSobre, setShowSobre] = useState(false);
 
   const fullText =
-    "Saudações, tripulante! Preciso da sua ajuda com uma missão espacial. Você deverá responder uma série de 3 perguntas envolvendo biologia e espaço! Quando passar o mouse sobre as estrelas acima de cada pergunta, você receberá dicas valiosas.";
+    "Grreetings, crew member! I need your help with a space mission. You will have to answer a series of difficult questions. But don’t worry—the stars will help you find the right path!";
 
   // Digitação do texto
   useEffect(() => {
@@ -46,12 +48,12 @@ const TelaMissao = ({ onBack, onComplete }) => {
     });
   }, []);
 
-  // Ação para avançar
+  // Ação para avançar: se onComplete foi passado, respeita; senão, mostra a tela SobreProjeto aqui
   const goNext = () => {
     if (typeof onComplete === "function") {
       onComplete();
     } else {
-      navigate("/quiz");
+      setShowSobre(true);
     }
   };
 
@@ -95,6 +97,11 @@ const TelaMissao = ({ onBack, onComplete }) => {
     );
   };
 
+  // Se o usuário avançou, renderiza a tela SobreProjeto inline (mantém o botão de voltar)
+  if (showSobre) {
+    return <SobreProjeto onBack={() => setShowSobre(false)} />;
+  }
+
   return (
     <main className="tela-missao">
       {/* Voltar: usa onBack se vier por props; caso contrário, linka para a home */}
@@ -115,13 +122,6 @@ const TelaMissao = ({ onBack, onComplete }) => {
 
         <div className="text-box" style={{ minHeight: "80px" }}>
           <p className="typing-text">{renderTypingText()}</p>
-
-          {/* Botão aparece ao final da digitação */}
-          {showQuizButton && (
-            <Link to="/quiz" className="start-quiz-button">
-              Iniciar Missão (Quiz)
-            </Link>
-          )}
         </div>
 
         {/* Botão extra para avançar manualmente a qualquer momento */}

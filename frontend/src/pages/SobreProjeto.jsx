@@ -1,37 +1,53 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./TelaMissao.css";
 import "../App.css";
 import "../index.css";
 import astronautaImg from "../assets/Imagem-astronauta2.png";
 
 
-const SobreProjeto = ({ onBack }) => {
+const SobreProjeto = ({ onBack, onAdvance }) => {
+    const navigate = useNavigate();
     const [displayText, setDisplayText] = useState("");
     const [showCursor, setShowCursor] = useState(true);
-    const fullText = "Thhe mission will consist of 3 questions involving biology and space! When you hover your mouse over the stars above each question, you’ll receive valuable hints.";
+    const fullText = "The mission will consist of 3 questions involving biology and space! When you hover your mouse over the stars above each question, you'll receive valuable hints.";
 
     useEffect(() => {
-        let currentIndex = 0;
-        const typingInterval = setInterval(() => {
-            if (currentIndex < fullText.length) {
-                setDisplayText(prev => prev + fullText[currentIndex]);
-                currentIndex++;
+        // Reset text on mount to avoid leftover state from previous renders
+        setDisplayText("");
+        setShowCursor(true);
+
+        let mounted = true;
+        let i = 0;
+        let timer = null;
+
+        const type = () => {
+            if (!mounted) return;
+            if (i < fullText.length) {
+                setDisplayText(prev => prev + fullText[i]);
+                i += 1;
+                timer = setTimeout(type, 20);
             } else {
-                clearInterval(typingInterval);
-                setShowCursor(false);
+                // typing finished — keep cursor blinking (do not set to false)
+                timer = null;
             }
-        }, 20);
-        return () => clearInterval(typingInterval);
-    }, []);
+        };
 
-    // // Efeito do cursor piscando
+        timer = setTimeout(type, 20);
+
+        return () => {
+            mounted = false;
+            if (timer) clearTimeout(timer);
+        };
+    }, [fullText]);
+
+    // Cursor blink independent of typing; runs while component is mounted
     useEffect(() => {
-        if (!showCursor) return;
         const cursorInterval = setInterval(() => {
             setShowCursor(c => !c);
         }, 500);
         return () => clearInterval(cursorInterval);
-    }, [showCursor]);
+    }, []);
 
     // Renderiza texto com cursor apenas na última letra
     const renderTypingText = () => {
@@ -47,6 +63,25 @@ const SobreProjeto = ({ onBack }) => {
             </>
         );
     };
+
+    // Avançar para o quiz ao pressionar Enter/Espaço na tela SobreProjeto
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            const isEnter = e.key === "Enter" || e.code === "Enter" || e.keyCode === 13;
+            const isSpace = e.key === " " || e.key === "Space" || e.key === "Spacebar" || e.code === "Space" || e.keyCode === 32;
+            if (isEnter || isSpace) {
+                e.preventDefault();
+                if (typeof onAdvance === 'function') {
+                    onAdvance();
+                } else {
+                    navigate('/quiz');
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown, { passive: false });
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [onAdvance, navigate]);
 
 
     return (
