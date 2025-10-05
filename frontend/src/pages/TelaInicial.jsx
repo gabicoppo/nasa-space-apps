@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import GlobalStyles from '@/GlobalStyles';
 import { Link } from "react-router-dom"; // Importa o Link para navegação
 import cytoscape from 'cytoscape';
 import './TelaInicial.css';
@@ -112,46 +113,46 @@ const GraphDisplay = ({ graphData }) => {
 };
 
 const TelaInicial = () => {
-  const [input, setInput] = useState("");
-  const [graphData, setGraphData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [result, setResult] = useState("");
+const [input, setInput] = useState("");
+const [graphData, setGraphData] = useState(null);
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState("");
+const [result, setResult] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-    setLoading(true);
-    setError("");
-    setResult("");
-    setGraphData(null);
-    const scrollToGraph = () => { setTimeout(() => { document.getElementById('graph-view')?.scrollIntoView({ behavior: 'smooth' }); }, 100); };
-    try {
-      const response = await queryBuildKG(input);
-      if (response && response.data && response.data.kg && response.data.kg.nodes) {
-        const { nodes, edges } = response.data.kg;
-        const nodeIds = new Set(nodes.map(n => n.id));
-        (edges || []).forEach(edge => {
-          if (edge.source && !nodeIds.has(edge.source)) { nodes.push({ id: edge.source, type: 'Unknown', description: 'Nó inferido.' }); nodeIds.add(edge.source); }
-          if (edge.target && !nodeIds.has(edge.target)) { nodes.push({ id: edge.target, type: 'Unknown', description: 'Nó inferido.' }); nodeIds.add(edge.target); }
-        });
-        setResult("Search completed! Your knowledge graph is ready below.");
-        setGraphData({ nodes, edges: edges || [] });
-      } else {
-        setError("A resposta da API não continha um grafo válido.");
-        setGraphData(errorGraphData);
-      }
-      scrollToGraph();
-    } catch (err) {
-      setError(err.message || "Ocorreu um erro durante a busca");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!input.trim()) return;
+  setLoading(true);
+  setError("");
+  setResult("");
+  setGraphData(null);
+  const scrollToGraph = () => { setTimeout(() => { document.getElementById('graph-view')?.scrollIntoView({ behavior: 'smooth' }); }, 100); };
+  try {
+    const response = await queryBuildKG(input);
+    if (response && response.data && response.data.kg && response.data.kg.nodes) {
+      const { nodes, edges } = response.data.kg;
+      const nodeIds = new Set(nodes.map(n => n.id));
+      (edges || []).forEach(edge => {
+        if (edge.source && !nodeIds.has(edge.source)) { nodes.push({ id: edge.source, type: 'Unknown', description: 'Nó inferido.' }); nodeIds.add(edge.source); }
+        if (edge.target && !nodeIds.has(edge.target)) { nodes.push({ id: edge.target, type: 'Unknown', description: 'Nó inferido.' }); nodeIds.add(edge.target); }
+      });
+      setResult("Search completed! Your knowledge graph is ready below.");
+      setGraphData({ nodes, edges: edges || [] });
+    } else {
+      setError("A resposta da API não continha um grafo válido.");
       setGraphData(errorGraphData);
-      scrollToGraph();
-    } finally {
-      setLoading(false);
     }
-  };
+    scrollToGraph();
+  } catch (err) {
+  setError(err.message || "Ocorreu um erro durante a busca");
+  setGraphData(errorGraphData);
+  scrollToGraph();
+  } finally {
+    setLoading(false);
+  }
+};
 
-  return (
+return (
     <div className="main-container-scroll">
       {/* --- BOTÃO VOLTAR ADICIONADO AQUI --- */}
       <Link to="/" className="back-button">
