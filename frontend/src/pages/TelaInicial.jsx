@@ -9,7 +9,7 @@ const TelaInicial = ({ onStartQuiz }) => {
     <main className="tela-inicial">
         {/* Título Principal */}
         <h1 className="tela-inicial__title">
-            Stellar Search
+            BioAstra Navigator
         </h1>
 
         {/* Subtítulo */}

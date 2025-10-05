@@ -51,9 +51,9 @@ const LandingSequence = React.memo(({ onStartMission }) => {
             onClick={onStartMission}
             aria-label="Enter Mission Control"
           >
-            <span className="btn-title">ENTER MISSION CONTROL</span>
+            <span className="btn-title">NEW HERE?</span>
             <span className="btn-desc">
-              Dive into the data and chat with our AI copilot.
+              Explore BioAstra.
             </span>
           </button>
 
@@ -62,9 +62,9 @@ const LandingSequence = React.memo(({ onStartMission }) => {
             onClick={onStartMission}
             aria-label="Start Knowledge Simulation"
           >
-            <span className="btn-title">START KNOWLEDGE SIMULATION</span>
+            <span className="btn-title">START SEARCH</span>
             <span className="btn-desc">
-              Test your skills in a simulated mission to Mars.
+              Dive into the data and chat with our AI copilot.
             </span>
           </button>
         </div>
