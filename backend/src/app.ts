@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: [
     "http://localhost:5173",   // local dev
-    "https://my-app.vercel.app" // production
+    "https://nasa-vercel-app.vercel.app/" // production
   ], 
   methods: ["GET", "POST", "PUT", "DELETE"],
 }));

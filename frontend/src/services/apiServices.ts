@@ -2,7 +2,7 @@ import { api } from "@/lib/api"
 
 export async function queryBuildKG(query : string) {
     try {
-        const body = { "query": query }
+        const body = { query }
         console.log(body)
         const res = await api.post("api/actions/buildKGFromQuery", body)
         console.log(res)
