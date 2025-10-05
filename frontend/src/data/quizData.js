@@ -1,4 +1,4 @@
-// src/data/quizData.js
+// app/data/quizData.js
 
 export const quizData = [
   {
@@ -6,7 +6,6 @@ export const quizData = [
     questionText: "Qual foi o primeiro __animal a orbitar a Terra__, abrindo caminho para futuros programas de pesquisa biomédica no espaço?",
     options: ["Ham, o chimpanzé", "Félicette, a gata", "Laika, a cadela", "Albert II, o macaco"],
     correctAnswer: "Laika, a cadela",
-    hintKeyword: "animal a orbitar a terra",
     graphData: {
       nodes: [
         { data: { id: "Laika", name: "Laika", type: "Animal", color: '#ffa500', description: "Uma cadela espacial soviética, o primeiro ser vivo a orbitar a Terra.", link: "https://www.google.com/search?q=Laika+(dog)" } },
@@ -24,7 +23,6 @@ export const quizData = [
     questionText: "Qual país lançou o biosatélite __Bion-M 1__, focado em experimentos com camundongos (Mus musculus)?",
     options: ["EUA", "China", "Rússia", "Agência Espacial Europeia"],
     correctAnswer: "Rússia",
-    hintKeyword: "bion-m 1",
     graphData: {
       nodes: [
         { data: { id: "Russia", name: "Rússia", type: "Country", color: '#ff6347', description: "País com um longo histórico em exploração espacial.", link: "https://www.google.com/search?q=Russia" } },
@@ -42,7 +40,6 @@ export const quizData = [
     questionText: "A missão STS-90 da NASA, também conhecida como __NeuroLab__, utilizou qual animal como organismo modelo para pesquisa neurológica?",
     options: ["Macacos Rhesus", "Peixe-zebra", "Camundongos", "Moscas-das-frutas"],
     correctAnswer: "Camundongos",
-    hintKeyword: "neurolab",
     graphData: {
       nodes: [
         { data: { id: "STS-90", name: "STS-90 (NeuroLab)", type: "Space Mission", color: '#20b2aa', description: "Missão do Ônibus Espacial focada em neurociência.", link: "https://www.google.com/search?q=STS-90" } },
