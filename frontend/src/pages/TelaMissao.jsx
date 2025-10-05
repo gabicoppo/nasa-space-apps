@@ -17,6 +17,14 @@ const TelaMissao = ({ onBack, onComplete }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
+
   const fullText = "Greetings, crew member! I need your help with a space mission. You will have to answer a series of difficult questions. But don't worry - the stars will help you find the right path!";
 
   // Efeito de digitação simplificado
@@ -95,7 +103,7 @@ const TelaMissao = ({ onBack, onComplete }) => {
   // render normal mission screen
   return (
     <main className="tela-missao">
-      <button onClick={onBack} className="back-button">
+      <button onClick={handleBack} className="back-button">
         ← Back
       </button>
       <div className="content-container">
