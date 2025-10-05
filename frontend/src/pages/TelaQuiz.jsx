@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom'; // Importa o Link
+import { Link } from 'react-router-dom';
 import cytoscape from 'cytoscape';
 import { quizData } from '../data/quizData';
 import './TelaQuiz.css';
+import astronautaImg from '../assets/apresentacaoastronauta.png';
 
 const ConstellationHint = ({ onGoBack, isVisible, graphData, hintKeyword }) => {
   const cyContainerRef = useRef(null);
@@ -86,18 +87,67 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData, hintKeyword }) => {
 const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNextQuestion, isLastQuestion }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
-  useEffect(() => { setSelectedOption(null); setIsAnswered(false); }, [questionData]);
+  const [showWrongModal, setShowWrongModal] = useState(false);
+  
+  useEffect(() => { 
+    setSelectedOption(null); 
+    setIsAnswered(false); 
+    setShowWrongModal(false);
+  }, [questionData]);
+  
   const formatQuestionText = (text) => { if (!text) return ''; return text.replace(/__(.*?)__/g, '<u>$1</u>'); };
-  const handleOptionClick = (option) => { if (isAnswered) return; setSelectedOption(option); setIsAnswered(true); onAnswerSelect(option); };
+  
+  const handleOptionClick = (option) => { 
+    if (isAnswered) return; 
+    setSelectedOption(option); 
+    setIsAnswered(true); 
+    onAnswerSelect(option); 
+    
+    // Se errou, mostra o modal grande
+    if (option !== questionData.correctAnswer) {
+      setShowWrongModal(true);
+    }
+  };
+
+  const closeModal = () => {
+    setShowWrongModal(false);
+  };
+
+  const handleHintFromModal = () => {
+    setShowWrongModal(false);
+    onShowHint();
+  };
+  
   return (
     <div className={`quiz-screen ${isHidden ? 'hidden' : ''}`}>
-      <button onClick={onShowHint} className="top-right-button">Show hint</button>
+      {/* Modal quando erra */}
+      {showWrongModal && (
+        <div className="wrong-answer-modal" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeModal}>×</button>
+            <img src={astronautaImg} alt="Astronaut Helper" className="modal-character" />
+            <div className="modal-text-box">
+              <p>Need help? Ask for a hint to our tool!</p>
+              <button className="modal-hint-button" onClick={handleHintFromModal}>
+                Get Hint
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="quiz-content">
         <h1 dangerouslySetInnerHTML={{ __html: formatQuestionText(questionData.questionText) }} />
         <div className="quiz-options">
           {questionData.options.map((option, index) => {
             let btnClass = "quiz-option-btn";
-            if (isAnswered) { if (option === questionData.correctAnswer) { btnClass += " correct"; } else if (option === selectedOption) { btnClass += " incorrect"; } }
+            if (isAnswered) { 
+              if (option === questionData.correctAnswer) { 
+                btnClass += " correct"; 
+              } else if (option === selectedOption) { 
+                btnClass += " incorrect"; 
+              } 
+            }
             return (<button key={index} className={btnClass} onClick={() => handleOptionClick(option)} disabled={isAnswered}>{option}</button>);
           })}
         </div>
@@ -118,13 +168,29 @@ export default function TelaQuiz() {
   const handleShowHint = () => setIsHintVisible(true);
   const handleHideHint = () => setIsHintVisible(false);
 
-  const handleAnswerSelect = (selectedAnswer) => { if (selectedAnswer === currentQuestion.correctAnswer) { setScore(score + 1); } };
-  const handleNextQuestion = () => { const nextIndex = currentQuestionIndex + 1; if (nextIndex < quizData.length) { setCurrentQuestionIndex(nextIndex); } else { setShowResults(true); } };
-  const restartQuiz = () => { setCurrentQuestionIndex(0); setScore(0); setShowResults(false); }
+  const handleAnswerSelect = (selectedAnswer) => { 
+    if (selectedAnswer === currentQuestion.correctAnswer) { 
+      setScore(score + 1); 
+    } 
+  };
+  
+  const handleNextQuestion = () => { 
+    const nextIndex = currentQuestionIndex + 1; 
+    if (nextIndex < quizData.length) { 
+      setCurrentQuestionIndex(nextIndex); 
+    } else { 
+      setShowResults(true); 
+    } 
+  };
+  
+  const restartQuiz = () => { 
+    setCurrentQuestionIndex(0); 
+    setScore(0); 
+    setShowResults(false); 
+  }
 
   return (
     <div className="quiz-container">
-      {/* --- BOTÃO VOLTAR ADICIONADO AQUI --- */}
       <Link to="/" className="back-to-home-button">
         ← Back to Home Page
       </Link>
