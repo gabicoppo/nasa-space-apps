@@ -4,6 +4,7 @@ import "./App.css";
 import "./index.css";
 import TelaInicial from "./pages/TelaInicial";
 import TelaMissao from "./pages/TelaMissao";
+import SobreProjeto from "./pages/SobreProjeto";
 import GlobalStyles from "./GlobalStyles";
 
 const LandingSequence = React.memo(({ onStartMission }) => {
@@ -86,8 +87,11 @@ function App() {
     setCurrentScreen('landing');
   }, []);
 
-  return (
+  const handleMissionComplete = useCallback(() => {
+    setCurrentScreen('sobreProjeto');
+  }, []);
 
+  return (
     <>
       <GlobalStyles />
       <link
@@ -102,7 +106,9 @@ function App() {
 
       <main className="app-main" role="main">
         {currentScreen === 'mission' ? (
-          <TelaMissao onBack={handleBack} />
+          <TelaMissao onBack={handleBack} onComplete={handleMissionComplete} />
+        ) : currentScreen === 'sobreProjeto' ? (
+          <SobreProjeto onBack={handleBack} />
         ) : (
           <LandingSequence onStartMission={handleMissionStart} />
         )}

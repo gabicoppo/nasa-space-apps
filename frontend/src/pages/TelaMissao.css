@@ -114,33 +114,27 @@
 
 /* Texto com efeito de digitação */
 .typing-text {
-    color: #ffffff;
-    font-size: 1.4rem;
-    line-height: 1.8;
-    margin: 0;
-    text-align: left;
-    font-family: 'Courier New', monospace;
-    border-right: 3px solid transparent;
+  color: #ffffff;
+  font-size: 1.4rem;
+  line-height: 1.8;
+  margin: 0;
+  text-align: left;
+  font-family: 'Courier New', monospace;
+  display: inline;           /* evita ocupar a largura toda */
+  white-space: pre-wrap;     /* mantém quebras */
 }
 
-/* Animação do cursor */
-@keyframes blink {
-    0%, 100% { border-color: transparent; }
-    50% { border-color: rgba(0, 255, 255, 0.8); }
+/* Cursor apenas no último caractere */
+.caret {
+  display: inline-block;
+  border-right: 3px solid rgba(0, 255, 255, 0.8);
+  padding-right: 2px;
+  height: 1em;               /* altura do cursor = altura da linha */
+  vertical-align: bottom;
+  animation: caret-blink 1s step-end infinite;
 }
 
-.typing-text:not(:empty) {
-    animation: blink 1s step-end infinite;
-}
-
-/* Animação de fade in */
-@keyframes fade-in-up {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
