@@ -10,5 +10,5 @@ export async function queryBuildKG(query : string) {
     } catch (error) {
         console.error("Error:", error);
         // return error
-    }
+    }   
 }
