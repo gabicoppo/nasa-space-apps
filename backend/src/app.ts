@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 
@@ -11,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: [
     "http://localhost:5173",   // local dev
-    "https://nasa-vercel-app.vercel.app/" // production
+    process.env.FRONTEND_URL || "https://nasa-vercel-app.vercel.app/" // production
   ], 
   methods: ["GET", "POST", "PUT", "DELETE"],
 }));
