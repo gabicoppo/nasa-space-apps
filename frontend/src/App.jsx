@@ -44,22 +44,16 @@ const LandingSequence = React.memo(({ onStartMission }) => {
           Ready to begin your mission?
         </h2>
 
-        <button
-          className="btn-primary mission-btn fade-in-up delay-500"
-          onClick={onStartMission}
-          aria-label="Enter Mission Control"
-        >
-          Enter Mission Control
-        </button>
-
-        <div className="actions-row fade-in-up delay-600">
+<div className="actions-column fade-in-up delay-400">
           <button
-            className="btn-secondary"
-            onClick={() => console.log('New clicked')}
-            aria-label="New"
-            type="button"
+            className="btn-composite btn-primary mission-btn"
+            onClick={onStartMission}
+            aria-label="Enter Mission Control"
           >
-            New
+            <span className="btn-title">ENTER MISSION CONTROL</span>
+            <span className="btn-desc">
+              Dive into the data and chat with our AI copilot.
+            </span>
           </button>
 
           <button
