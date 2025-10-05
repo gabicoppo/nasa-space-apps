@@ -1,37 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom'; // Importa o Link
+import { Link } from 'react-router-dom';
 import cytoscape from 'cytoscape';
 import { quizData } from '../data/quizData';
 import './TelaQuiz.css';
 
-const ConstellationHint = ({ onGoBack, isVisible, graphData, hintKeyword }) => {
+const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
   const cyContainerRef = useRef(null);
   const tooltipRef = useRef(null);
   const cyInstanceRef = useRef(null);
-  const [hintState, setHintState] = useState('idle');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isAlertVisible, setIsAlertVisible] = useState(false);
-  const [starShadows, setStarShadows] = useState({ s1: '', s2: '', s3: '' });
+  const [isZoomedIn, setIsZoomedIn] = useState(false);
 
   useEffect(() => {
-    const generateStarShadows = (starCount) => {
-      let shadows = '';
-      for (let i = 0; i < starCount; i++) {
-        shadows += `${Math.random() * 2000}px ${Math.random() * 2000}px #FFF`;
-        if (i < starCount - 1) { shadows += ', '; }
-      }
-      return shadows;
-    };
-    setStarShadows({ s1: generateStarShadows(700), s2: generateStarShadows(200), s3: generateStarShadows(100) });
-  }, []);
+    if (!isVisible) {
+        setIsZoomedIn(false);
+        if (cyInstanceRef.current) {
+            cyInstanceRef.current.destroy();
+            cyInstanceRef.current = null;
+        }
+        return;
+    }
 
-  useEffect(() => {
-    if (isVisible) { setHintState('search'); } 
-    else { setHintState('idle'); setSearchTerm(''); }
-  }, [isVisible]);
-
-  useEffect(() => {
-    if (hintState === 'graph' && cyContainerRef.current) {
+    if (cyContainerRef.current) {
       const cy = cytoscape({
         container: cyContainerRef.current,
         elements: [ ...graphData.nodes, ...graphData.edges ],
@@ -40,15 +29,20 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData, hintKeyword }) => {
             { selector: 'edge', style: { 'width': 3, 'line-color': '#45a29e', 'target-arrow-shape': 'triangle', 'target-arrow-color': '#45a29e', 'curve-style': 'bezier', 'line-opacity': 0.7 } }
         ],
         layout: { name: 'cose', fit: true, padding: 50, idealEdgeLength: 180, nodeRepulsion: 5000, animate: 'end', animationDuration: 1500 },
-        zoomingEnabled: true, userZoomingEnabled: false, panningEnabled: true, userPanningEnabled: true, minZoom: 0.5, maxZoom: 2,
+        zoomingEnabled: true, userZoomingEnabled: true, panningEnabled: true, userPanningEnabled: true, minZoom: 0.5, maxZoom: 2,
       });
+
       cyInstanceRef.current = cy;
+      
       const tooltip = tooltipRef.current;
       cy.on('mouseover', 'node, edge', (event) => { cyContainerRef.current.classList.add('cursor-pointer'); const element = event.target; const description = element.data('description'); if (element.isNode()) { element.style('border-opacity', 0.9); } else { element.style({ 'line-color': '#66fcf1', 'target-arrow-color': '#66fcf1', 'line-opacity': 1 }); } if (description) { tooltip.innerHTML = description; tooltip.style.display = 'block'; } });
       cy.on('mouseout', 'node, edge', (event) => { cyContainerRef.current.classList.remove('cursor-pointer'); const element = event.target; if (element.isNode()) { element.style('border-opacity', 0.5); } else { element.style({ 'line-color': '#45a29e', 'target-arrow-color': '#45a29e', 'line-opacity': 0.7 }); } tooltip.style.display = 'none'; });
       cy.on('mousemove', (event) => { tooltip.style.left = `${event.originalEvent.pageX + 15}px`; tooltip.style.top = `${event.originalEvent.pageY + 15}px`; });
       cy.on('tap', 'node', (evt) => { const node = evt.target; const url = node.data('link'); if (url) { window.open(url, '_blank'); } });
-      const zoomSlider = document.getElementById('zoom-slider'); const zoomInBtn = document.getElementById('zoom-in'); const zoomOutBtn = document.getElementById('zoom-out');
+
+      const zoomSlider = document.getElementById('zoom-slider');
+      const zoomInBtn = document.getElementById('zoom-in');
+      const zoomOutBtn = document.getElementById('zoom-out');
       if(zoomSlider && zoomInBtn && zoomOutBtn) {
         const zoomStep = 0.1;
         zoomSlider.min = cy.minZoom(); zoomSlider.max = cy.maxZoom();
@@ -64,21 +58,36 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData, hintKeyword }) => {
       }
     }
     return () => { if (cyInstanceRef.current) { cyInstanceRef.current.destroy(); cyInstanceRef.current = null; } };
-  }, [hintState, graphData]);
+  }, [isVisible, graphData]);
 
-  const handleSearchSubmit = (event) => { event.preventDefault(); if (searchTerm.toLowerCase().trim() === hintKeyword) { setHintState('graph'); } else { setIsAlertVisible(true); setTimeout(() => setIsAlertVisible(false), 4000); setSearchTerm(''); } };
+  const handleZoomToggle = () => {
+    const cy = cyInstanceRef.current;
+    if (!cy) return;
+    if (isZoomedIn) { cy.animate({ fit: { padding: 50 }, duration: 500 }); } 
+    else { cy.animate({ zoom: 1.5, center: { eles: cy.nodes() }, duration: 500 }); }
+    setIsZoomedIn(!isZoomedIn);
+  };
 
   return (
     <div className={`hint-screen ${isVisible ? 'visible' : ''}`}>
-      <button onClick={onGoBack} className="top-right-button">Voltar</button>
-      <div className="stars-background"><div className="stars" style={{boxShadow: starShadows.s1}}></div><div className="stars2" style={{boxShadow: starShadows.s2}}></div><div className="stars3" style={{boxShadow: starShadows.s3}}></div></div>
-      <div className="top-search-bar">
-        <form onSubmit={handleSearchSubmit}><input className="search-input" type="text" placeholder="Digite a palavra-chave sublinhada..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} /><button className="search-button" type="submit">Buscar</button></form>
-        <div className={`search-alert ${isAlertVisible ? 'visible' : ''}`}>Palavra-chave incorreta. A dica é: <strong>{hintKeyword}</strong></div>
+      {/* --- CLASSE DO BOTÃO "VOLTAR" ATUALIZADA --- */}
+      <button onClick={onGoBack} className="back-to-quiz-button">
+        Voltar ao Quiz
+      </button>
+      
+      <div id="cy" ref={cyContainerRef} />
+      <div id="tooltip" ref={tooltipRef} />
+      
+      <div id="zoom-controls">
+        <button onClick={handleZoomToggle} className="zoom-toggle-btn">
+          {isZoomedIn ? 'Zoom Out' : 'Zoom In'}
+        </button>
+        <div className="zoom-slider-container">
+          <span id="zoom-out">-</span>
+          <input type="range" id="zoom-slider" />
+          <span id="zoom-in">+</span>
+        </div>
       </div>
-      {hintState === 'graph' && (
-        <><div id="cy" ref={cyContainerRef} /><div id="tooltip" ref={tooltipRef} /><div id="zoom-controls"><span id="zoom-out">-</span><input type="range" id="zoom-slider" /><span id="zoom-in">+</span></div></>
-      )}
     </div>
   );
 };
@@ -86,22 +95,39 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData, hintKeyword }) => {
 const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNextQuestion, isLastQuestion }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
-  useEffect(() => { setSelectedOption(null); setIsAnswered(false); }, [questionData]);
+  
+  useEffect(() => {
+    setSelectedOption(null);
+    setIsAnswered(false);
+  }, [questionData]);
+
+  const handleOptionClick = (option) => { if (isAnswered) return; setSelectedOption(option); };
+  const handleConfirmClick = () => { if (!selectedOption) return; setIsAnswered(true); onAnswerSelect(selectedOption); };
   const formatQuestionText = (text) => { if (!text) return ''; return text.replace(/__(.*?)__/g, '<u>$1</u>'); };
-  const handleOptionClick = (option) => { if (isAnswered) return; setSelectedOption(option); setIsAnswered(true); onAnswerSelect(option); };
+
   return (
     <div className={`quiz-screen ${isHidden ? 'hidden' : ''}`}>
-      <button onClick={onShowHint} className="top-right-button">Mostrar Dica</button>
       <div className="quiz-content">
         <h1 dangerouslySetInnerHTML={{ __html: formatQuestionText(questionData.questionText) }} />
         <div className="quiz-options">
           {questionData.options.map((option, index) => {
             let btnClass = "quiz-option-btn";
-            if (isAnswered) { if (option === questionData.correctAnswer) { btnClass += " correct"; } else if (option === selectedOption) { btnClass += " incorrect"; } }
+            if (isAnswered) {
+              if (option === questionData.correctAnswer) { btnClass += " correct"; } 
+              else if (option === selectedOption) { btnClass += " incorrect"; }
+            } else if (option === selectedOption) { btnClass += " selected"; }
             return (<button key={index} className={btnClass} onClick={() => handleOptionClick(option)} disabled={isAnswered}>{option}</button>);
           })}
         </div>
-        {isAnswered && (<button onClick={onNextQuestion} className="next-btn">{isLastQuestion ? 'Finalizar Quiz' : 'Próxima Pergunta'}</button>)}
+        
+        <div className="quiz-actions">
+            <button onClick={onShowHint} className="action-btn hint-btn">Conferir no Grafo</button>
+            {!isAnswered ? (
+                <button onClick={handleConfirmClick} className="action-btn confirm-btn" disabled={!selectedOption}>Confirmar Resposta</button>
+            ) : (
+                <button onClick={onNextQuestion} className="action-btn next-btn">{isLastQuestion ? 'Finalizar Quiz' : 'Próxima Pergunta'}</button>
+            )}
+        </div>
       </div>
     </div>
   );
@@ -109,23 +135,22 @@ const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNext
 
 export default function TelaQuiz() {
   const [isHintVisible, setIsHintVisible] = useState(false);
+  const [isHomeButtonVisible, setIsHomeButtonVisible] = useState(true);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
 
   const currentQuestion = quizData[currentQuestionIndex];
 
-  const handleShowHint = () => setIsHintVisible(true);
-  const handleHideHint = () => setIsHintVisible(false);
-
+  const handleShowHint = () => { setIsHintVisible(true); setIsHomeButtonVisible(false); };
+  const handleHideHint = () => { setIsHintVisible(false); setTimeout(() => { setIsHomeButtonVisible(true); }, 750); };
   const handleAnswerSelect = (selectedAnswer) => { if (selectedAnswer === currentQuestion.correctAnswer) { setScore(score + 1); } };
   const handleNextQuestion = () => { const nextIndex = currentQuestionIndex + 1; if (nextIndex < quizData.length) { setCurrentQuestionIndex(nextIndex); } else { setShowResults(true); } };
   const restartQuiz = () => { setCurrentQuestionIndex(0); setScore(0); setShowResults(false); }
 
   return (
     <div className="quiz-container">
-      {/* --- BOTÃO VOLTAR ADICIONADO AQUI --- */}
-      <Link to="/" className="back-to-home-button">
+      <Link to="/" className={`back-to-home-button ${!isHomeButtonVisible ? 'hidden' : ''}`}>
         ← Voltar à Home
       </Link>
 
@@ -134,12 +159,14 @@ export default function TelaQuiz() {
           <div className="quiz-content">
             <h1>Quiz Finalizado!</h1>
             <p style={{fontSize: '1.5rem', margin: '20px 0'}}>Sua pontuação foi: {score} de {quizData.length}</p>
-            <button onClick={restartQuiz} className="next-btn">Tentar Novamente</button>
+            <div className="quiz-actions" style={{justifyContent: 'center'}}>
+                <button onClick={restartQuiz} className="action-btn next-btn">Tentar Novamente</button>
+            </div>
           </div>
         </div>
       ) : (
         <>
-          <ConstellationHint onGoBack={handleHideHint} isVisible={isHintVisible} graphData={currentQuestion.graphData} hintKeyword={currentQuestion.hintKeyword} />
+          <ConstellationHint onGoBack={handleHideHint} isVisible={isHintVisible} graphData={currentQuestion.graphData} />
           <QuizScreen onShowHint={handleShowHint} isHidden={isHintVisible} questionData={currentQuestion} onAnswerSelect={handleAnswerSelect} onNextQuestion={handleNextQuestion} isLastQuestion={currentQuestionIndex === quizData.length - 1} />
         </>
       )}
