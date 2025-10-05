@@ -112,6 +112,32 @@
     align-self: center;
 }
 
+/* Painel à direita que contém caixa de texto + ações (botão) */
+.right-panel {
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem; /* espaço entre caixa e botão */
+    align-items: flex-end; /* alinha o botão à direita dentro do painel */
+}
+
+.right-panel .text-box {
+    position: relative; /* torna a caixa relativa dentro do painel */
+    width: 100%;
+}
+
+.actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end; /* garante que o botão fique à direita */
+    padding-right: 2.5rem; /* alinha o botão com o padding interno da .text-box */
+    box-sizing: border-box;
+}
+
 /* Texto com efeito de digitação */
 .typing-text {
   color: #ffffff;
@@ -124,62 +150,70 @@
   white-space: pre-wrap;     /* mantém quebras */
 }
 
+/* Botão Next */
+.next-button {
+    padding: 1rem 2rem;
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Courier New', monospace;
+    backdrop-filter: blur(10px);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.next-button:hover {
+    background: rgba(0, 255, 255, 0.2);
+    border-color: rgba(0, 255, 255, 0.8);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.next-button:active {
+    transform: translateY(0);
+}
+
 /* Cursor apenas no último caractere */
 .caret {
   display: inline-block;
-  border-right: 3px solid rgba(0, 255, 255, 0.8);
-  padding-right: 2px;
-  height: 1em;               /* altura do cursor = altura da linha */
+  width: 3px; /* Largura do cursor */
+  height: 1.4rem; /* Altura do cursor, ajuste conforme o font-size */
+  background-color: rgba(0, 255, 255, 0.8);
+  margin-left: 2px;
   vertical-align: bottom;
   animation: caret-blink 1s step-end infinite;
 }
 
-/* Animação de fade in */
-@keyframes fade-in-up {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Responsivo: em telas pequenas empilha o painel à direita em coluna centralizada */
+@media (max-width: 768px) {
+    .right-panel {
+        position: static;
+        transform: none;
+        width: 90%;
+        margin: 1rem auto;
+        align-items: center;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+
+    .right-panel .text-box {
+        width: 100%;
+        padding: 1.5rem;
     }
-}
 
-/* Adicione ao final de TelaMissao.css */
+    .actions {
+            justify-content: center;
+            padding-right: 1.5rem; /* corresponde ao padding da text-box em mobile */
+    }
 
-.start-quiz-button {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 12px 28px;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #ffffff;
-    background: linear-gradient(90deg, #7c3aed 0%, #06b6d4 100%);
-    border: none;
-    border-radius: 50px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
-
-    /* Animação de entrada */
-    animation: fade-in-up 0.8s ease-out;
-}
-
-.start-quiz-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
-}
-
-/* Animação usada pelo botão */
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    .next-button {
+        width: auto;
+    }
 }

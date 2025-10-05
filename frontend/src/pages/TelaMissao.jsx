@@ -10,36 +10,26 @@ import astronautaImg from "../assets/apresentacaoastronauta.png"
 import SobreProjeto from "./SobreProjeto";
 
 const TelaMissao = ({ onBack, onComplete }) => {
-  const navigate = useNavigate();
-
   const [displayText, setDisplayText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
   const [showQuizButton, setShowQuizButton] = useState(false);
   const [showSobre, setShowSobre] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const fullText =
-    "Grreetings, crew member! I need your help with a space mission. You will have to answer a series of difficult questions. But don’t worry—the stars will help you find the right path!";
+  const fullText = "Greetings, crew member! I need your help with a space mission. You will have to answer a series of difficult questions. But don't worry - the stars will help you find the right path!";
 
-  // Digitação do texto
+  // Efeito de digitação simplificado
   useEffect(() => {
-    let i = 0;
-    const id = setInterval(() => {
-      if (i < fullText.length) {
-        setDisplayText((prev) => prev + fullText[i]);
-        i++;
-      } else {
-        clearInterval(id);
-        setShowQuizButton(true);
-      }
-    }, 20);
-    return () => clearInterval(id);
-  }, []);
 
-  // Blink do cursor
-  useEffect(() => {
-    const id = setInterval(() => setShowCursor((c) => !c), 500);
-    return () => clearInterval(id);
-  }, []);
+    if (currentIndex < fullText.length) {
+      const timeout = setTimeout(() => {
+        setDisplayText(fullText.slice(0, currentIndex + 1));
+        setCurrentIndex(currentIndex + 1);
+      }, 20);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, fullText]);
+
 
   // Evita que algum input capture as teclas
   useEffect(() => {
@@ -65,9 +55,9 @@ const TelaMissao = ({ onBack, onComplete }) => {
         e.key === " " || e.key === "Space" || e.key === "Spacebar" ||
         e.code === "Space" || e.keyCode === 32;
 
-      if (isEnter || isSpace) {
+      if ((isEnter || isSpace) && typeof onComplete === "function") {
         e.preventDefault();
-        goNext();
+        onComplete();
       }
     };
 
@@ -101,16 +91,11 @@ const TelaMissao = ({ onBack, onComplete }) => {
   if (showSobre) {
     return <SobreProjeto onBack={() => setShowSobre(false)} />;
   }
-
   return (
     <main className="tela-missao">
-      {/* Voltar: usa onBack se vier por props; caso contrário, linka para a home */}
-      {typeof onBack === "function" ? (
-        <button onClick={onBack} className="back-button">← Voltar</button>
-      ) : (
-        <Link to="/" className="back-button">← Voltar</Link>
-      )}
-
+      <button onClick={onBack} className="back-button">
+        ← Back
+      </button>
       <div className="content-container">
         <div className="spacecraft-container">
           <img
@@ -119,19 +104,33 @@ const TelaMissao = ({ onBack, onComplete }) => {
             className="spacecraft-image"
           />
         </div>
+        <div className="right-panel">
+          <div className="text-box" style={{ minHeight: "80px" }}>
+            <p className="typing-text">
+              {displayText}
+              {currentIndex < fullText.length && <span className="caret"></span>}
+            </p>
+          </div>
+          <div className="text-box" style={{ minHeight: "80px" }}>
+            <p className="typing-text">{renderTypingText()}</p>
+          </div>
 
-        <div className="text-box" style={{ minHeight: "80px" }}>
-          <p className="typing-text">{renderTypingText()}</p>
-        </div>
+          {/* Botão extra para avançar manualmente a qualquer momento */}
+          <div className="actions">
+            <button className="next-button" onClick={goNext}>
+              Pressione Espaço/Enter ou clique aqui →
+            </button>
 
-        {/* Botão extra para avançar manualmente a qualquer momento */}
-        <div className="actions">
-          <button className="next-button" onClick={goNext}>
-            Pressione Espaço/Enter ou clique aqui →
-          </button>
+            <div className="actions">
+              <button className="next-button" onClick={onComplete}>
+                Next →
+              </button>
+            </div>
+
+          </div>
         </div>
       </div>
-    </main>
+    </main >
   );
 };
 
