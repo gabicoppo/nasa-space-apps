@@ -1,18 +1,11 @@
-// src/data/quizData.js
+// app/data/quizData.js
+
 export const quizData = [
   {
     id: 1,
-    questionText: "What was the primary species of mice used in the Bion-M 1 space mission?",
-    options: [
-      "BALB/c mice",
-      "C57BL/6N mice",
-      "Swiss Webster mice",
-      "FVB/N mice"
-    ],
-    correctAnswer: "C57BL/6N mice",
-    hintKeyword: "mice species bion-m 1",
-    article_name: "Mice in Bion-M 1 space mission: training and selection",
-    url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4136787/",
+    questionText: "Qual foi o primeiro __animal a orbitar a Terra__, abrindo caminho para futuros programas de pesquisa biomédica no espaço?",
+    options: ["Ham, o chimpanzé", "Félicette, a gata", "Laika, a cadela", "Albert II, o macaco"],
+    correctAnswer: "Laika, a cadela",
     graphData: {
       nodes: [
         { data: { id: "Bion-M 1", name: "Bion-M 1", type: "Event", color: '#4682b4', description: "A Russian biosatellite that completed a 30-day spaceflight from April 19 to May 19, 2013.", link: "https://www.google.com/search?q=Bion-M+1" } },
@@ -73,17 +66,9 @@ export const quizData = [
   },
   {
     id: 2,
-    questionText: "What cellular process is significantly increased in bone tissue during spaceflight, leading to bone loss?",
-    options: [
-      "Osteoblast-mediated bone formation",
-      "Osteoclast-mediated bone resorption",
-      "Osteocyte differentiation",
-      "Bone mineralization"
-    ],
-    correctAnswer: "Osteoclast-mediated bone resorption",
-    hintKeyword: "bone loss spaceflight",
-    article_name: "Microgravity induces pelvic bone loss through osteoclastic activity, osteocytic osteolysis, and osteoblastic cell cycle inhibition by CDKN1a/p21",
-    url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3630201/",
+    questionText: "Qual país lançou o biosatélite __Bion-M 1__, focado em experimentos com camundongos (Mus musculus)?",
+    options: ["EUA", "China", "Rússia", "Agência Espacial Europeia"],
+    correctAnswer: "Rússia",
     graphData: {
       nodes: [
         { data: { id: "Microgravity", name: "Microgravity", type: "Concept", color: '#778899', description: "Condition of apparent weightlessness experienced during spaceflight that significantly affects physiological responses.", link: "https://www.google.com/search?q=microgravity" } },
@@ -129,17 +114,9 @@ export const quizData = [
   },
   {
     id: 3,
-    questionText: "Which space facility has been the primary location for conducting microgravity research on biological systems?",
-    options: [
-      "Hubble Space Telescope",
-      "International Space Station (ISS)",
-      "Skylab",
-      "Mir Space Station"
-    ],
-    correctAnswer: "International Space Station (ISS)",
-    hintKeyword: "a",
-    article_name: "Stem Cell Health and Tissue Regeneration in Microgravity",
-    url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11988870/",
+    questionText: "A missão STS-90 da NASA, também conhecida como __NeuroLab__, utilizou qual animal como organismo modelo para pesquisa neurológica?",
+    options: ["Macacos Rhesus", "Peixe-zebra", "Camundongos", "Moscas-das-frutas"],
+    correctAnswer: "Camundongos",
     graphData: {
       nodes: [
         { data: { id: "International Space Station", name: "International Space Station", type: "Organization", color: '#4169e1', description: "Habitable space station serving as a microgravity research laboratory for biological and physical sciences.", link: "https://www.google.com/search?q=International+Space+Station" } },
