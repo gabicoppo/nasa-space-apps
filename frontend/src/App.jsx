@@ -4,6 +4,7 @@ import React, { useState, useCallback } from "react";
 import "./App.css";
 import "./index.css";
 import TelaInicial from "./pages/TelaInicial";
+import TelaMissao from "./pages/TelaMissao";
 import GlobalStyles from "./GlobalStyles";
 
 const LandingSequence = React.memo(({ onStartMission }) => {
@@ -77,10 +78,14 @@ const LandingSequence = React.memo(({ onStartMission }) => {
 });
 
 function App() {
-  const [showMainScreen, setShowMainScreen] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState('landing');
 
   const handleMissionStart = useCallback(() => {
-    setShowMainScreen(true);
+    setCurrentScreen('mission');
+  }, []);
+
+  const handleBack = useCallback(() => {
+    setCurrentScreen('landing');
   }, []);
 
   return (
@@ -97,8 +102,8 @@ function App() {
       <div className="planet-earth" aria-hidden="true" />
 
       <main className="app-main" role="main">
-        {showMainScreen ? (
-          <TelaInicial />
+        {currentScreen === 'mission' ? (
+          <TelaMissao onBack={handleBack} />
         ) : (
           <LandingSequence onStartMission={handleMissionStart} />
         )}

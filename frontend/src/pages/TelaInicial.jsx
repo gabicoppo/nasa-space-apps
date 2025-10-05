@@ -3,7 +3,7 @@ import "./TelaInicial.css";  // ✅ Correto (mesmo diretório)
 import "../App.css";          // ⬅️ Sobe um nível para src/
 import "../index.css";        // ⬅️ Sobe um nível para src/
 
-const TelaInicial = () => {
+const TelaInicial = ({ onStartQuiz }) => {
     
   return (
     <main className="tela-inicial">
@@ -36,6 +36,11 @@ const TelaInicial = () => {
                 </button>
             </div>
         </form>
+
+        {/* Botão para iniciar a missão */}
+        <button onClick={onStartQuiz} className="mission-button">
+            Iniciar Missão Espacial
+        </button>
     </main>
   );
 };

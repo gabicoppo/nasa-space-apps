@@ -1,0 +1,146 @@
+/* TelaMissao.css */
+
+/* Botão de Voltar */
+.back-button {
+    position: fixed;
+    top: 2rem;
+    left: 2rem;
+    padding: 0.8rem 1.5rem;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 100;
+    font-family: 'Courier New', monospace;
+    backdrop-filter: blur(10px);
+}
+
+.back-button:hover {
+    background: rgba(0, 255, 255, 0.1);
+    border-color: rgba(0, 255, 255, 0.8);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.back-button:active {
+    transform: translateY(0);
+}
+
+/* Container Principal */
+.tela-missao {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+}
+
+/* Container do conteúdo */
+.content-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 2rem;
+}
+
+/* Container do astronauta */
+.spacecraft-container {
+    position: absolute;
+    left: 0;
+    bottom: -10%; /* Move um pouco para baixo da tela */
+    width: 50%;
+    height: 120%; /* Maior que 100% para dar o efeito de sair da tela */
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+/* Imagem do astronauta */
+.spacecraft-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: bottom;
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.5));
+    transform: scaleX(-1); /* Espelha a imagem horizontalmente */
+}
+
+/* Animação de flutuação */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* Título Principal */
+.tela-missao__title {
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-shadow: 0 0 18px rgba(0, 255, 255, 0.8);
+    animation: fade-in-up 0.8s ease-out;
+}
+
+/* Caixa de texto */
+.text-box {
+    position: absolute;
+    right: 5%;
+    width: 45%;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    border-radius: 10px;
+    padding: 2.5rem;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    align-self: center;
+}
+
+/* Texto com efeito de digitação */
+.typing-text {
+    color: #ffffff;
+    font-size: 1.4rem;
+    line-height: 1.8;
+    margin: 0;
+    text-align: left;
+    font-family: 'Courier New', monospace;
+    border-right: 3px solid transparent;
+}
+
+/* Animação do cursor */
+@keyframes blink {
+    0%, 100% { border-color: transparent; }
+    50% { border-color: rgba(0, 255, 255, 0.8); }
+}
+
+.typing-text:not(:empty) {
+    animation: blink 1s step-end infinite;
+}
+
+/* Animação de fade in */
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
