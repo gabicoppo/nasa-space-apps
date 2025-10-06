@@ -175,7 +175,7 @@ const TelaInicial = ({ isBackendReady }) => {
                 onChange={(e) => setInput(e.target.value)} 
                 type="search" 
                 className="search-form__input" 
-                placeholder={isBackendReady ? "Explore exoplanets, missions, data..." : "Please wait, server is activating..."} 
+                placeholder={isBackendReady ? "Explore exoplanets, missions, data..." : 'Waking up the knowledge source... Use the time to explore the quiz!'} 
                 disabled={!isBackendReady}
               />
               <button 
