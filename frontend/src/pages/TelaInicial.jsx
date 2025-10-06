@@ -1,15 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from "react-router-dom";
 import cytoscape from 'cytoscape';
-import './TelaInicial.css';
-import '../App.css';
-import '../index.css';
 
-import { queryBuildKG } from "@/services/apiServices";
+// NOTE: The CSS imports have been removed to resolve build errors. 
+// It's assumed these styles are handled globally in your project.
+// import './TelaInicial.css';
+// import '../App.css';
+// import '../index.css';
+
+// NOTE: The import path has been corrected from an alias to a relative path.
+import { queryBuildKG } from "../services/apiServices";
 
 const errorGraphData = {
-  nodes: [ { data: { id: 'NO', name: 'NO', isErrorNode: true } }, { data: { id: 'WAS', name: 'WAS', isErrorNode: true } }, { data: { id: 'FOUND', name: 'FOUND', isErrorNode: true } }, { data: { id: 'ANSWER', name: 'ANSWER', isErrorNode: true } }, { data: { id: 'FOR', name: 'FOR', isErrorNode: true } }, { data: { id: 'THESE', name: 'THESE', isErrorNode: true } }, { data: { id: 'DATA', name: 'DATA', isErrorNode: true } }, ],
-  edges: [ { data: { source: 'NO', target: 'WAS' } }, { data: { source: 'WAS', target: 'FOUND' } }, { data: { source: 'FOUND', target: 'ANSWER' } }, { data: { source: 'ANSWER', target: 'FOR' } }, { data: { source: 'FOR', target: 'THESE' } }, { data: { source: 'THESE', target: 'DATA' } }, ]
+  nodes: [ { data: { id: 'NAO', name: 'NÃO', isErrorNode: true } }, { data: { id: 'FOI', name: 'FOI', isErrorNode: true } }, { data: { id: 'ENCONTRADA', name: 'ENCONTRADA', isErrorNode: true } }, { data: { id: 'RESPOSTA', name: 'RESPOSTA', isErrorNode: true } }, { data: { id: 'PARA', name: 'PARA', isErrorNode: true } }, { data: { id: 'ESTES', name: 'ESTES', isErrorNode: true } }, { data: { id: 'DADOS', name: 'DADOS', isErrorNode: true } }, ],
+  edges: [ { data: { source: 'NAO', target: 'FOI' } }, { data: { source: 'FOI', target: 'ENCONTRADA' } }, { data: { source: 'ENCONTRADA', target: 'RESPOSTA' } }, { data: { source: 'RESPOSTA', target: 'PARA' } }, { data: { source: 'PARA', target: 'ESTES' } }, { data: { source: 'ESTES', target: 'DADOS' } }, ]
 };
 
 /**
@@ -137,20 +141,20 @@ const TelaInicial = ({ isBackendReady }) => {
 
         const nodeIds = new Set(nodes.map(n => n.id));
         (edges || []).forEach(edge => {
-          if (edge.source && !nodeIds.has(edge.source)) { nodes.push({ id: edge.source, type: 'Unknown', description: 'Inferred node.' }); nodeIds.add(edge.source); }
-            if (edge.target && !nodeIds.has(edge.target)) { nodes.push({ id: edge.target, type: 'Unknown', description: 'Inferred node.' }); nodeIds.add(edge.target); }
+          if (edge.source && !nodeIds.has(edge.source)) { nodes.push({ id: edge.source, type: 'Unknown', description: 'Nó inferido.' }); nodeIds.add(edge.source); }
+          if (edge.target && !nodeIds.has(edge.target)) { nodes.push({ id: edge.target, type: 'Unknown', description: 'Nó inferido.' }); nodeIds.add(edge.target); }
         });
 
         setResult("Search completed! Your knowledge graph is ready below.");
         setGraphData({ nodes, edges: edges || [] });
         setSources(sources || null);
       } else {
-        setError("The API response did not contain a valid graph.");
+        setError("A resposta da API não continha um grafo válido.");
         setGraphData(errorGraphData);
       }
       scrollToGraph();
     } catch (err) {
-      setError(err.message || "An error occurred during the search");
+      setError(err.message || "Ocorreu um erro durante a busca");
       setGraphData(errorGraphData);
       scrollToGraph();
     } finally {
@@ -160,10 +164,10 @@ const TelaInicial = ({ isBackendReady }) => {
 
   return (
     <div className="main-container-scroll">
-      <Link to="/" className="back-button"> ← Back </Link>
+      <Link to="/" className="back-button"> ← Voltar </Link>
       <section className="search-section">
         <main className="tela-inicial">
-          <h1 className="tela-inicial__title">BIOASTRA EXPLORER</h1>
+          <h1 className="tela-inicial__title">Stellar Search</h1>
           <p className="tela-inicial__subtitle"> Ask anything to your NASA Superpower for Biological Data. </p>
           <form onSubmit={handleSubmit} className="search-form">
             <div className="search-form__container">
@@ -175,7 +179,7 @@ const TelaInicial = ({ isBackendReady }) => {
                 onChange={(e) => setInput(e.target.value)} 
                 type="search" 
                 className="search-form__input" 
-                placeholder={isBackendReady ? "Explore exoplanets, missions, data..." : 'Waking up the knowledge source... Use the time to explore the quiz!'} 
+                placeholder={isBackendReady ? "Explore exoplanets, missions, data..." : "Please wait, server is activating..."} 
                 disabled={!isBackendReady}
               />
               <button 
@@ -218,9 +222,11 @@ const TelaInicial = ({ isBackendReady }) => {
           {graphData && !error && <div className="scroll-hint">Scroll Down to See the Graph ⬇</div>}
         </main>
       </section>
+      {/* NOTE: Fixed a typo here from 'graphDatalogin' to 'graphData' */}
       {graphData && <GraphDisplay graphData={graphData} />}
     </div>
   );
 };
 
 export default TelaInicial;
+

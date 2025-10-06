@@ -22,7 +22,7 @@ function App() {
       try {
         console.log('Waking up the knowledge source... Use the time to explore the quiz!');
         // We just need to wait for the call to finish, no need to process the response
-        await queryBuildKG("test");
+        await queryBuildKG("sjdhsiudhsidjsodisjdoisdosidjsodijsodisodsijd");
         console.log('Backend activated successfully.');
       } catch (error) {
         console.error('Failed to wake up knowledge source, but enabling UI anyway:', error);
