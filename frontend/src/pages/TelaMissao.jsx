@@ -17,6 +17,14 @@ const TelaMissao = ({ onBack, onComplete }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
+
   const fullText = "Greetings, crew member! I need your help with a space mission. You will have to answer a series of difficult questions. But don't worry - the stars will help you find the right path!";
 
   // Efeito de digitação simplificado
@@ -39,7 +47,7 @@ const TelaMissao = ({ onBack, onComplete }) => {
     });
   }, []);
 
-  // Ação para avançar: se onComplete foi passado, respeita; senão, mostra a tela SobreProjeto aqui
+  // Ação para avançar: agora vai direto para o quiz
   const goNext = () => {
     if (typeof onComplete === "function") {
       try {
@@ -48,11 +56,10 @@ const TelaMissao = ({ onBack, onComplete }) => {
         // ignore
       }
     }
-    // navigate to the SobreProjeto route
-    navigate('/sobreprojeto');
+    navigate('/quiz');
   };
 
-  // Espaço/Enter avançam
+  // Espaço/Enter ou clique em qualquer lugar avançam
   useEffect(() => {
     const handleKeyDown = (e) => {
       const isEnter = e.key === "Enter" || e.code === "Enter" || e.keyCode === 13;
@@ -64,10 +71,18 @@ const TelaMissao = ({ onBack, onComplete }) => {
         goNext();
       }
     };
-
+    const handleClick = (e) => {
+      // Evita que o clique no botão de voltar ou Next dispare navegação duplicada
+      if (e.target.classList.contains('back-button') || e.target.classList.contains('next-button')) return;
+      goNext();
+    };
     window.addEventListener("keydown", handleKeyDown, { passive: false });
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []); // goNext é estável
+    window.addEventListener("click", handleClick);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("click", handleClick);
+    };
+  }, []);
 
   // Renderiza texto com cursor apenas no último caractere
   const renderTypingText = () => {
@@ -91,11 +106,10 @@ const TelaMissao = ({ onBack, onComplete }) => {
     );
   };
 
-  // Se o usuário avançou, renderiza a tela SobreProjeto inline (mantém o botão de voltar)
   // render normal mission screen
   return (
     <main className="tela-missao">
-      <button onClick={onBack} className="back-button">
+      <button onClick={handleBack} className="back-button">
         ← Back
       </button>
       <div className="content-container">
@@ -110,8 +124,6 @@ const TelaMissao = ({ onBack, onComplete }) => {
           <div className="text-box" style={{ minHeight: "80px" }}>
             <p className="typing-text">{renderTypingText()}</p>
           </div>
-
-          {/* Botão extra para avançar manualmente a qualquer momento */}
           <div className="actions">
             <button className="next-button" onClick={goNext}>
               Next →
