@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import GlobalStyles from '@/GlobalStyles';
 import { Link } from "react-router-dom";
 import cytoscape from 'cytoscape';
 import './TelaInicial.css';
@@ -13,6 +12,9 @@ const errorGraphData = {
   edges: [ { data: { source: 'NO', target: 'WAS' } }, { data: { source: 'WAS', target: 'FOUND' } }, { data: { source: 'FOUND', target: 'ANSWER' } }, { data: { source: 'ANSWER', target: 'FOR' } }, { data: { source: 'FOR', target: 'THESE' } }, { data: { source: 'THESE', target: 'DATA' } }, ]
 };
 
+/**
+ * A sub-component responsible for rendering the Cytoscape knowledge graph.
+ */
 const GraphDisplay = ({ graphData }) => {
   const cyContainerRef = useRef(null);
   const tooltipRef = useRef(null);
@@ -23,6 +25,7 @@ const GraphDisplay = ({ graphData }) => {
       const elements = [ ...graphData.nodes.map(node => ({ data: { ...node, name: node.id } })), ...graphData.edges.map(edge => ({ data: { ...edge } })) ];
       const isError = elements.some(el => el.data.isErrorNode);
       const layoutConfig = isError ? { name: 'grid', rows: 1, padding: 30 } : { name: 'cose', fit: true, padding: 50, idealEdgeLength: 180, nodeRepulsion: 5000, animate: 'end', animationDuration: 1500 };
+      
       const cy = cytoscape({
         container: cyContainerRef.current,
         elements: elements,
@@ -30,7 +33,9 @@ const GraphDisplay = ({ graphData }) => {
         layout: layoutConfig,
         zoomingEnabled: true, userZoomingEnabled: false, panningEnabled: true, userPanningEnabled: true, minZoom: 0.2, maxZoom: 3,
       });
+
       cyInstanceRef.current = cy;
+
       if (!isError) {
         const components = cy.elements().components();
         const baseHues = [210, 120, 280, 60, 30, 0];
@@ -44,6 +49,7 @@ const GraphDisplay = ({ graphData }) => {
           });
         });
       }
+
       cy.on('tap', 'node', (evt) => {
         const node = evt.target;
         if (node.data('isErrorNode')) return;
@@ -51,10 +57,12 @@ const GraphDisplay = ({ graphData }) => {
         const url = `https://www.google.com/search?q=${query}`;
         window.open(url, '_blank');
       });
+
       const tooltip = tooltipRef.current;
       cy.on('mouseover', 'node, edge', (event) => { cyContainerRef.current.classList.add('cursor-pointer'); const element = event.target; const description = element.data('description'); if (description) { tooltip.innerHTML = description; tooltip.style.display = 'block'; } });
       cy.on('mouseout', 'node, edge', () => { cyContainerRef.current.classList.remove('cursor-pointer'); tooltip.style.display = 'none'; });
       cy.on('mousemove', (event) => { tooltip.style.left = `${event.originalEvent.pageX + 15}px`; tooltip.style.top = `${event.originalEvent.pageY + 15}px`; });
+
       const zoomSlider = document.getElementById('zoom-slider');
       const zoomInBtn = document.getElementById('zoom-in');
       const zoomOutBtn = document.getElementById('zoom-out');
@@ -78,17 +86,19 @@ const GraphDisplay = ({ graphData }) => {
   return ( <section className="graph-section" id="graph-view"> <div id="cy" ref={cyContainerRef} /> <div id="tooltip" ref={tooltipRef} /> <div id="zoom-controls"> <span id="zoom-out">-</span> <input type="range" id="zoom-slider" /> <span id="zoom-in">+</span> </div> </section> );
 };
 
-const TelaInicial = () => {
+/**
+ * The main search page component. It handles user input, API calls, and displays results.
+ */
+const TelaInicial = ({ isBackendReady }) => {
   const [input, setInput] = useState("");
   const [graphData, setGraphData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState("");
   const [loadingTextIndex, setLoadingTextIndex] = useState(0);
-  const [sources, setSources] = useState(null); // NEW: State for sources
+  const [sources, setSources] = useState(null);
 
   const suggestions = [ "What mice were in space?", "What happens to bones in space?", "How does space affect cells?", ];
-  
   const loadingMessages = [ "Aligning cosmic data streams...", "Querying stellar archives...", "Warping spacetime for your answer...", "Calibrating the knowledge engine...", "Charting new neural pathways...", "Translating biological signals...", ];
 
   useEffect(() => {
@@ -107,23 +117,24 @@ const TelaInicial = () => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    // Prevent submission if the backend isn't ready or input is empty
+    if (!input.trim() || !isBackendReady) return;
+    
     setLoading(true);
     setLoadingTextIndex(0);
     setError("");
     setResult("");
     setGraphData(null);
-    setSources(null); // NEW: Reset sources on new search
+    setSources(null);
+    
     const scrollToGraph = () => { setTimeout(() => { document.getElementById('graph-view')?.scrollIntoView({ behavior: 'smooth' }); }, 100); };
+    
     try {
       const response = await queryBuildKG(input);
-
-      // MODIFIED: Handle both kg and sources from response
       if (response && response.data && response.data.kg) {
         const { kg, sources } = response.data;
         const { nodes, edges } = kg;
 
-        // This part is for ensuring the graph renders correctly
         const nodeIds = new Set(nodes.map(n => n.id));
         (edges || []).forEach(edge => {
           if (edge.source && !nodeIds.has(edge.source)) { nodes.push({ id: edge.source, type: 'Unknown', description: 'Inferred node.' }); nodeIds.add(edge.source); }
@@ -132,7 +143,7 @@ const TelaInicial = () => {
 
         setResult("Search completed! Your knowledge graph is ready below.");
         setGraphData({ nodes, edges: edges || [] });
-        setSources(sources || null); // NEW: Set the sources state
+        setSources(sources || null);
       } else {
         setError("The API response did not contain a valid graph.");
         setGraphData(errorGraphData);
@@ -159,13 +170,26 @@ const TelaInicial = () => {
               <div className="search-form__icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg>
               </div>
-              <input value={input} onChange={(e) => setInput(e.target.value)} type="search" className="search-form__input" placeholder="Explore exoplanets, missions, data..." />
-              <button type="submit" className="search-form__button" disabled={loading}> {loading ? "Sending..." : "Search"} </button>
+              <input 
+                value={input} 
+                onChange={(e) => setInput(e.target.value)} 
+                type="search" 
+                className="search-form__input" 
+                placeholder={isBackendReady ? "Explore exoplanets, missions, data..." : "Please wait, server is activating..."} 
+                disabled={!isBackendReady}
+              />
+              <button 
+                type="submit" 
+                className="search-form__button" 
+                disabled={loading || !isBackendReady}
+              >
+                {isBackendReady ? (loading ? "Sending..." : "Search") : "Activating..."}
+              </button>
             </div>
           </form>
           <div className="suggestions-container">
             {suggestions.map((q, index) => (
-              <button key={index} className="suggestion-item" onClick={() => handleSuggestionClick(q)}>
+              <button key={index} className="suggestion-item" onClick={() => handleSuggestionClick(q)} disabled={!isBackendReady}>
                 {q}
               </button>
             ))}
@@ -181,7 +205,6 @@ const TelaInicial = () => {
           {error && <div className="result-message error"><strong>Error:</strong> {error}</div>}
           {result && <div className="result-message success"><strong>Response:</strong> {result}</div>}
 
-          {/* --------- NEW JSX FOR SOURCE DISPLAY --------- */}
           {sources && sources.length > 0 && (
             <div className="source-display-container">
               <p className="source-boilerplate">Generated from the primary source:</p>
@@ -191,7 +214,6 @@ const TelaInicial = () => {
               </a>
             </div>
           )}
-          {/* --------- END NEW JSX --------- */}
 
           {graphData && !error && <div className="scroll-hint">Scroll Down to See the Graph ⬇</div>}
         </main>
