@@ -117,6 +117,7 @@ const TelaInicial = ({ isBackendReady }) => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Prevent submission if the backend isn't ready or input is empty
     if (!input.trim() || !isBackendReady) return;
     
     setLoading(true);
@@ -174,7 +175,7 @@ const TelaInicial = ({ isBackendReady }) => {
                 onChange={(e) => setInput(e.target.value)} 
                 type="search" 
                 className="search-form__input" 
-                placeholder={isBackendReady ? "Explore exoplanets, missions, data..." : "Waking up the engine, explore the quiz for now!"} 
+                placeholder={isBackendReady ? "Explore exoplanets, missions, data..." : "Please wait, server is activating..."} 
                 disabled={!isBackendReady}
               />
               <button 
@@ -217,7 +218,7 @@ const TelaInicial = ({ isBackendReady }) => {
           {graphData && !error && <div className="scroll-hint">Scroll Down to See the Graph ⬇</div>}
         </main>
       </section>
-      {graphData && <GraphDisplay graphData={graphDatalogin} />}
+      {graphData && <GraphDisplay graphData={graphData} />}
     </div>
   );
 };
