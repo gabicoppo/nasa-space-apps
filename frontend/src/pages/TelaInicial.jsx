@@ -177,7 +177,7 @@ const TelaInicial = ({ isBackendReady }) => {
       <Link to="/" className="back-button"> ← Voltar </Link>
       <section className="search-section">
         <main className="tela-inicial">
-          <h1 className="tela-inicial__title">Stellar Search</h1>
+          <h1 className="tela-inicial__title">Bioastra Explorer</h1>
           <p className="tela-inicial__subtitle"> Ask anything to your NASA Superpower for Biological Data. </p>
           <form onSubmit={handleSubmit} className="search-form">
             <div className="search-form__container">
