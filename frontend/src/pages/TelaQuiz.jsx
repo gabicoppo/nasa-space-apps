@@ -117,10 +117,12 @@ const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNext
 // --- COMPONENTE PRINCIPAL DA PÁGINA ---
 export default function TelaQuiz() {
   const [introStep, setIntroStep] = useState(0);
-  // Textos revisados em inglês
+
   const dialogs = [
-    "Greetings, future Space Explorer! Get ready to embark on your mission and tackle three challenging questions.", 
-    "If you need a little cosmic guidance, click 'Check Graph'. All the answers you seek can be found within the constellations."
+    "  Your first challenge consists of three critical questions drawn from NASA's greatest discoveries.", 
+    "  But don't worry, every great explorer needs a guide. For this journey, your map is the stars in our knowledge graph.",
+    "  Follow the lines connecting each star, as they hold the clues needed to illuminate the answers.",
+    "  Ready to embark on this cosmic quest? Let's begin!"
   ];
   
   const handleNextDialog = () => {
@@ -149,21 +151,30 @@ export default function TelaQuiz() {
   const handleHideHint = () => { setIsHintVisible(false); setTimeout(() => { setIsHomeButtonVisible(true); }, 750); };
   const handleAnswerSelect = (selectedAnswer) => { if (selectedAnswer === currentQuestion.correctAnswer) { setScore(score + 1); } };
   const handleNextQuestion = () => { const nextIndex = currentQuestionIndex + 1; if (nextIndex < quizData.length) { setCurrentQuestionIndex(nextIndex); } else { setShowResults(true); } };
-  const restartQuiz = () => { setCurrentQuestionIndex(0); setScore(0); setShowResults(false); setIntroStep(0); }
+  
+  const restartQuiz = () => {
+    setCurrentQuestionIndex(0);
+    setScore(0);
+    setShowResults(false);
+    // A LINHA ABAIXO FOI REMOVIDA PARA NÃO MOSTRAR A INTRODUÇÃO NOVAMENTE
+    // setIntroStep(0); 
+  }
 
   return (
     <div className="quiz-container">
+      <div className="stars"></div>
+      <div className="twinkling"></div>
+
       {introStep < dialogs.length && (
         <div className="intro-overlay">
+          <img src={astronautaImg} alt="Astronaut Character" className="intro-astronaut" />
           <div className="intro-content-wrapper">
-            {/* A classe 'intro-astronaut-large' será definida no CSS para redimensionar */}
-            <img src={astronautaImg} alt="Astronaut Character" className="intro-astronaut intro-astronaut-large" />
             <div className="intro-dialog-container">
               <div className="intro-text-box">
                 <TypingText text={dialogs[introStep]} />
               </div>
               <button onClick={handleNextDialog} className="intro-next-btn">
-                {introStep === dialogs.length - 1 ? 'Start Quiz' : 'Skip Dialog'}
+                {introStep === dialogs.length - 1 ? 'Start Quiz' : 'Continue'}
               </button>
             </div>
           </div>
