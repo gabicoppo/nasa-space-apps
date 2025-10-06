@@ -71,9 +71,10 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
   return (
     <div className={`hint-screen ${isVisible ? 'visible' : ''}`}>
       {/* --- CLASSE DO BOTÃO "VOLTAR" ATUALIZADA --- */}
-      <button onClick={onGoBack} className="back-to-quiz-button">
-        Voltar ao Quiz
-      </button>
+        {/* --- UPDATED: BACK BUTTON --- */}
+        <button onClick={onGoBack} className="back-to-quiz-button">
+          Back to Quiz
+        </button>
       
       <div id="cy" ref={cyContainerRef} />
       <div id="tooltip" ref={tooltipRef} />
@@ -120,14 +121,14 @@ const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNext
           })}
         </div>
         
-        <div className="quiz-actions">
-            <button onClick={onShowHint} className="action-btn hint-btn">Conferir no Grafo</button>
-            {!isAnswered ? (
-                <button onClick={handleConfirmClick} className="action-btn confirm-btn" disabled={!selectedOption}>Confirmar Resposta</button>
-            ) : (
-                <button onClick={onNextQuestion} className="action-btn next-btn">{isLastQuestion ? 'Finalizar Quiz' : 'Próxima Pergunta'}</button>
-            )}
-        </div>
+    <div className="quiz-actions">
+      <button onClick={onShowHint} className="action-btn hint-btn">View in Graph</button>
+      {!isAnswered ? (
+        <button onClick={handleConfirmClick} className="action-btn confirm-btn" disabled={!selectedOption}>Confirm Answer</button>
+      ) : (
+        <button onClick={onNextQuestion} className="action-btn next-btn">{isLastQuestion ? 'Finish Quiz' : 'Next Question'}</button>
+      )}
+    </div>
       </div>
     </div>
   );
@@ -151,16 +152,18 @@ export default function TelaQuiz() {
   return (
     <div className="quiz-container">
       <Link to="/" className={`back-to-home-button ${!isHomeButtonVisible ? 'hidden' : ''}`}>
-        ← Voltar à Home
+        ← Back to Home
       </Link>
 
       {showResults ? (
         <div className="quiz-screen">
           <div className="quiz-content">
             <h1>Quiz Finalizado!</h1>
-            <p style={{fontSize: '1.5rem', margin: '20px 0'}}>Sua pontuação foi: {score} de {quizData.length}</p>
+              <h1>Quiz Finished!</h1>
+              <p style={{fontSize: '1.5rem', margin: '20px 0'}}>Your score: {score} out of {quizData.length}</p>
             <div className="quiz-actions" style={{justifyContent: 'center'}}>
                 <button onClick={restartQuiz} className="action-btn next-btn">Tentar Novamente</button>
+                  <button onClick={restartQuiz} className="action-btn next-btn">Try Again</button>
             </div>
           </div>
         </div>

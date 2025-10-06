@@ -67,7 +67,7 @@ const SobreProjeto = ({ onBack, onAdvance }) => {
 
     return (
         <div className={styles.root}>
-            <button className={styles.backButton} onClick={onBack}>← Voltar</button>
+            <button className={styles.backButton} onClick={onBack}>Back</button>
             <div className={styles.container}>
                 <img src={astronautaImg} className={styles.spacecraft} alt="astronaut" />
                 <div className={styles.content}>
