@@ -3,7 +3,31 @@ import { Link } from 'react-router-dom';
 import cytoscape from 'cytoscape';
 import { quizData } from '../data/quizData';
 import './TelaQuiz.css';
+import astronautaImg from '../assets/Imagem-astronauta2.png';
 
+// --- SUB-COMPONENTE DE DIGITAÇÃO ---
+const TypingText = ({ text }) => {
+  const [displayText, setDisplayText] = useState('');
+  
+  useEffect(() => {
+    setDisplayText('');
+    let index = 0;
+    const intervalId = setInterval(() => {
+      if (index < text.length) {
+        setDisplayText(prev => prev + text.charAt(index));
+        index++;
+      } else {
+        clearInterval(intervalId);
+      }
+    }, 30);
+    
+    return () => clearInterval(intervalId);
+  }, [text]);
+
+  return <p className="typing-text">{displayText}</p>;
+};
+
+// --- SUB-COMPONENTE DA DICA (SEM ALTERAÇÕES) ---
 const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
   const cyContainerRef = useRef(null);
   const tooltipRef = useRef(null);
@@ -12,37 +36,27 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
 
   useEffect(() => {
     if (!isVisible) {
-        setIsZoomedIn(false);
-        if (cyInstanceRef.current) {
-            cyInstanceRef.current.destroy();
-            cyInstanceRef.current = null;
-        }
-        return;
+      if (cyInstanceRef.current) {
+        cyInstanceRef.current.destroy();
+        cyInstanceRef.current = null;
+      }
+      setIsZoomedIn(false);
+      return;
     }
-
     if (cyContainerRef.current) {
       const cy = cytoscape({
-        container: cyContainerRef.current,
-        elements: [ ...graphData.nodes, ...graphData.edges ],
-        style: [
-            { selector: 'node', style: { 'shape': 'ellipse', 'background-color': (ele) => ele.data('color'), 'label': 'data(name)', 'color': 'white', 'text-outline-color': '#000', 'text-outline-width': '2px', 'font-size': 14, 'width': 120, 'height': 120, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': '100px', 'border-width': '8px', 'border-color': (ele) => ele.data('color'), 'border-opacity': 0.5 } },
-            { selector: 'edge', style: { 'width': 3, 'line-color': '#45a29e', 'target-arrow-shape': 'triangle', 'target-arrow-color': '#45a29e', 'curve-style': 'bezier', 'line-opacity': 0.7 } }
-        ],
+        container: cyContainerRef.current, elements: [ ...graphData.nodes, ...graphData.edges ],
+        style: [ { selector: 'node', style: { 'shape': 'ellipse', 'background-color': (ele) => ele.data('color'), 'label': 'data(name)', 'color': 'white', 'text-outline-color': '#000', 'text-outline-width': '2px', 'font-size': 14, 'width': 120, 'height': 120, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': '100px', 'border-width': '8px', 'border-color': (ele) => ele.data('color'), 'border-opacity': 0.5 } }, { selector: 'edge', style: { 'width': 3, 'line-color': '#45a29e', 'target-arrow-shape': 'triangle', 'target-arrow-color': '#45a29e', 'curve-style': 'bezier', 'line-opacity': 0.7 } } ],
         layout: { name: 'cose', fit: true, padding: 50, idealEdgeLength: 180, nodeRepulsion: 5000, animate: 'end', animationDuration: 1500 },
         zoomingEnabled: true, userZoomingEnabled: true, panningEnabled: true, userPanningEnabled: true, minZoom: 0.5, maxZoom: 2,
       });
-
       cyInstanceRef.current = cy;
-      
       const tooltip = tooltipRef.current;
       cy.on('mouseover', 'node, edge', (event) => { cyContainerRef.current.classList.add('cursor-pointer'); const element = event.target; const description = element.data('description'); if (element.isNode()) { element.style('border-opacity', 0.9); } else { element.style({ 'line-color': '#66fcf1', 'target-arrow-color': '#66fcf1', 'line-opacity': 1 }); } if (description) { tooltip.innerHTML = description; tooltip.style.display = 'block'; } });
       cy.on('mouseout', 'node, edge', (event) => { cyContainerRef.current.classList.remove('cursor-pointer'); const element = event.target; if (element.isNode()) { element.style('border-opacity', 0.5); } else { element.style({ 'line-color': '#45a29e', 'target-arrow-color': '#45a29e', 'line-opacity': 0.7 }); } tooltip.style.display = 'none'; });
       cy.on('mousemove', (event) => { tooltip.style.left = `${event.originalEvent.pageX + 15}px`; tooltip.style.top = `${event.originalEvent.pageY + 15}px`; });
       cy.on('tap', 'node', (evt) => { const node = evt.target; const url = node.data('link'); if (url) { window.open(url, '_blank'); } });
-
-      const zoomSlider = document.getElementById('zoom-slider');
-      const zoomInBtn = document.getElementById('zoom-in');
-      const zoomOutBtn = document.getElementById('zoom-out');
+      const zoomSlider = document.getElementById('zoom-slider'); const zoomInBtn = document.getElementById('zoom-in'); const zoomOutBtn = document.getElementById('zoom-out');
       if(zoomSlider && zoomInBtn && zoomOutBtn) {
         const zoomStep = 0.1;
         zoomSlider.min = cy.minZoom(); zoomSlider.max = cy.maxZoom();
@@ -57,54 +71,28 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
         zoomOutBtn.addEventListener('click', zoomOut);
       }
     }
-    return () => { if (cyInstanceRef.current) { cyInstanceRef.current.destroy(); cyInstanceRef.current = null; } };
   }, [isVisible, graphData]);
-
-  const handleZoomToggle = () => {
-    const cy = cyInstanceRef.current;
-    if (!cy) return;
-    if (isZoomedIn) { cy.animate({ fit: { padding: 50 }, duration: 500 }); } 
-    else { cy.animate({ zoom: 1.5, center: { eles: cy.nodes() }, duration: 500 }); }
-    setIsZoomedIn(!isZoomedIn);
-  };
-
+  const handleZoomToggle = () => { const cy = cyInstanceRef.current; if (!cy) return; if (isZoomedIn) { cy.animate({ fit: { padding: 50 }, duration: 500 }); } else { cy.animate({ zoom: 1.5, center: { eles: cy.nodes() }, duration: 500 }); } setIsZoomedIn(!isZoomedIn); };
   return (
     <div className={`hint-screen ${isVisible ? 'visible' : ''}`}>
-      {/* --- CLASSE DO BOTÃO "VOLTAR" ATUALIZADA --- */}
-      <button onClick={onGoBack} className="back-to-quiz-button">
-        Voltar ao Quiz
-      </button>
-      
-      <div id="cy" ref={cyContainerRef} />
-      <div id="tooltip" ref={tooltipRef} />
-      
+      <button onClick={onGoBack} className="back-to-quiz-button">Back to Quiz</button>
+      <div id="cy" ref={cyContainerRef} /><div id="tooltip" ref={tooltipRef} />
       <div id="zoom-controls">
-        <button onClick={handleZoomToggle} className="zoom-toggle-btn">
-          {isZoomedIn ? 'Zoom Out' : 'Zoom In'}
-        </button>
-        <div className="zoom-slider-container">
-          <span id="zoom-out">-</span>
-          <input type="range" id="zoom-slider" />
-          <span id="zoom-in">+</span>
-        </div>
+        <button onClick={handleZoomToggle} className="zoom-toggle-btn">{isZoomedIn ? 'Zoom Out' : 'Zoom In'}</button>
+        <div className="zoom-slider-container"><span id="zoom-out">-</span><input type="range" id="zoom-slider" /><span id="zoom-in">+</span></div>
       </div>
     </div>
   );
 };
 
+// --- SUB-COMPONENTE DA TELA DO QUIZ (SEM ALTERAÇÕES INTERNAS) ---
 const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNextQuestion, isLastQuestion }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
-  
-  useEffect(() => {
-    setSelectedOption(null);
-    setIsAnswered(false);
-  }, [questionData]);
-
+  useEffect(() => { setSelectedOption(null); setIsAnswered(false); }, [questionData]);
+  const formatQuestionText = (text) => { if (!text) return ''; return text.replace(/__(.*?)__/g, '<u>$1</u>'); };
   const handleOptionClick = (option) => { if (isAnswered) return; setSelectedOption(option); };
   const handleConfirmClick = () => { if (!selectedOption) return; setIsAnswered(true); onAnswerSelect(selectedOption); };
-  const formatQuestionText = (text) => { if (!text) return ''; return text.replace(/__(.*?)__/g, '<u>$1</u>'); };
-
   return (
     <div className={`quiz-screen ${isHidden ? 'hidden' : ''}`}>
       <div className="quiz-content">
@@ -112,62 +100,102 @@ const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNext
         <div className="quiz-options">
           {questionData.options.map((option, index) => {
             let btnClass = "quiz-option-btn";
-            if (isAnswered) {
-              if (option === questionData.correctAnswer) { btnClass += " correct"; } 
-              else if (option === selectedOption) { btnClass += " incorrect"; }
-            } else if (option === selectedOption) { btnClass += " selected"; }
+            if (isAnswered) { if (option === questionData.correctAnswer) { btnClass += " correct"; } else if (option === selectedOption) { btnClass += " incorrect"; } } 
+            else if (option === selectedOption) { btnClass += " selected"; }
             return (<button key={index} className={btnClass} onClick={() => handleOptionClick(option)} disabled={isAnswered}>{option}</button>);
           })}
         </div>
-        
         <div className="quiz-actions">
-            <button onClick={onShowHint} className="action-btn hint-btn">Conferir no Grafo</button>
-            {!isAnswered ? (
-                <button onClick={handleConfirmClick} className="action-btn confirm-btn" disabled={!selectedOption}>Confirmar Resposta</button>
-            ) : (
-                <button onClick={onNextQuestion} className="action-btn next-btn">{isLastQuestion ? 'Finalizar Quiz' : 'Próxima Pergunta'}</button>
-            )}
+            <button onClick={onShowHint} className="action-btn hint-btn">Check Graph</button>
+            {!isAnswered ? (<button onClick={handleConfirmClick} className="action-btn confirm-btn" disabled={!selectedOption}>Confirm Answer</button>) : (<button onClick={onNextQuestion} className="action-btn next-btn">{isLastQuestion ? 'Finish Quiz' : 'Next Question'}</button>)}
         </div>
       </div>
     </div>
   );
 };
 
+// --- COMPONENTE PRINCIPAL DA PÁGINA ---
 export default function TelaQuiz() {
+  const [introStep, setIntroStep] = useState(0);
+  // Textos revisados em inglês
+  const dialogs = [
+    "Greetings, future Space Explorer! Get ready to embark on your mission and tackle three challenging questions.", 
+    "If you need a little cosmic guidance, click 'Check Graph'. All the answers you seek can be found within the constellations."
+  ];
+  
+  const handleNextDialog = () => {
+    setIntroStep(prev => prev + 1);
+  };
+  
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const isSpace = e.key === " " || e.code === "Space";
+      if (isSpace && introStep < dialogs.length) {
+        e.preventDefault();
+        handleNextDialog();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [introStep]);
+
   const [isHintVisible, setIsHintVisible] = useState(false);
   const [isHomeButtonVisible, setIsHomeButtonVisible] = useState(true);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
-
   const currentQuestion = quizData[currentQuestionIndex];
-
   const handleShowHint = () => { setIsHintVisible(true); setIsHomeButtonVisible(false); };
   const handleHideHint = () => { setIsHintVisible(false); setTimeout(() => { setIsHomeButtonVisible(true); }, 750); };
   const handleAnswerSelect = (selectedAnswer) => { if (selectedAnswer === currentQuestion.correctAnswer) { setScore(score + 1); } };
   const handleNextQuestion = () => { const nextIndex = currentQuestionIndex + 1; if (nextIndex < quizData.length) { setCurrentQuestionIndex(nextIndex); } else { setShowResults(true); } };
-  const restartQuiz = () => { setCurrentQuestionIndex(0); setScore(0); setShowResults(false); }
+  const restartQuiz = () => { setCurrentQuestionIndex(0); setScore(0); setShowResults(false); setIntroStep(0); }
 
   return (
     <div className="quiz-container">
-      <Link to="/" className={`back-to-home-button ${!isHomeButtonVisible ? 'hidden' : ''}`}>
-        ← Voltar à Home
+      {introStep < dialogs.length && (
+        <div className="intro-overlay">
+          <div className="intro-content-wrapper">
+            {/* A classe 'intro-astronaut-large' será definida no CSS para redimensionar */}
+            <img src={astronautaImg} alt="Astronaut Character" className="intro-astronaut intro-astronaut-large" />
+            <div className="intro-dialog-container">
+              <div className="intro-text-box">
+                <TypingText text={dialogs[introStep]} />
+              </div>
+              <button onClick={handleNextDialog} className="intro-next-btn">
+                {introStep === dialogs.length - 1 ? 'Start Quiz' : 'Skip Dialog'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Link to="/" className={`back-to-home-button ${isHintVisible ? 'hidden' : ''}`}>
+        ← Back to Home
       </Link>
 
       {showResults ? (
         <div className="quiz-screen">
           <div className="quiz-content">
-            <h1>Quiz Finalizado!</h1>
-            <p style={{fontSize: '1.5rem', margin: '20px 0'}}>Sua pontuação foi: {score} de {quizData.length}</p>
+            <h1>Quiz Finished!</h1>
+            <p style={{fontSize: '1.5rem', margin: '20px 0'}}>Your score: {score} out of {quizData.length}</p>
             <div className="quiz-actions" style={{justifyContent: 'center'}}>
-                <button onClick={restartQuiz} className="action-btn next-btn">Tentar Novamente</button>
+                <button onClick={restartQuiz} className="action-btn next-btn">Try Again</button>
             </div>
           </div>
         </div>
       ) : (
         <>
           <ConstellationHint onGoBack={handleHideHint} isVisible={isHintVisible} graphData={currentQuestion.graphData} />
-          <QuizScreen onShowHint={handleShowHint} isHidden={isHintVisible} questionData={currentQuestion} onAnswerSelect={handleAnswerSelect} onNextQuestion={handleNextQuestion} isLastQuestion={currentQuestionIndex === quizData.length - 1} />
+          <div className={introStep === 1 ? 'highlight-hint' : ''}>
+            <QuizScreen 
+                onShowHint={handleShowHint} 
+                isHidden={isHintVisible}
+                questionData={currentQuestion} 
+                onAnswerSelect={handleAnswerSelect} 
+                onNextQuestion={handleNextQuestion} 
+                isLastQuestion={currentQuestionIndex === quizData.length - 1} />
+          </div>
         </>
       )}
     </div>
