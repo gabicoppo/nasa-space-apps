@@ -351,3 +351,20 @@ html, body {
 
 input[type=range] { -webkit-appearance: none; width: 120px; height: 5px; background: #555; outline: none; border-radius: 50px; }
 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: #66fcf1; cursor: pointer; border-radius: 50%; border: 2px solid #1f2833; }
+
+.tooltip-source {
+  margin-top: 8px;
+  padding-top: 5px;
+  border-top: 1px solid #ccc;
+  font-size: 0.9em;
+  color: #ddd;
+}
+
+.tooltip-source a {
+  color: #66fcf1;
+  text-decoration: none;
+}
+
+.tooltip-source a:hover {
+  text-decoration: underline;
+}
