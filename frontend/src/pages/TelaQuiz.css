@@ -1,9 +1,135 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
 .quiz-container {
     position: relative;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    margin: 0;
+    padding: 0;
+    /* CORREÇÃO: Removido o background estático daqui.
+       O fundo agora virá dos divs .stars e .twinkling do GlobalStyles */
+    background: transparent;
 }
+
+/* --- ESTILOS DA INTRODUÇÃO COM ASTRONAUTA --- */
+
+.intro-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    opacity: 0;
+    animation: fadeInOverlay 0.5s forwards;
+    margin: 0;
+    padding: 0;
+}
+
+@keyframes fadeInOverlay {
+    to { opacity: 1; }
+}
+
+.intro-content-wrapper {
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+    height: 100%;
+    padding: 0 20px 50px 20px;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1002;
+}
+
+.intro-astronaut {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    outline: none !important;
+    height: 65vh;
+    width: auto;
+    max-height: 550px;
+    z-index: 1001;
+    object-fit: contain;
+    transform: scaleX(-1);
+    filter: drop-shadow(0 0 15px rgba(102, 252, 241, 0.6));
+}
+
+.intro-astronaut::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 15%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 100%);
+    pointer-events: none;
+}
+
+.intro-dialog-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 500px;
+    margin-bottom: 0;
+    margin-left: 35vw;
+    padding-left: 20px;
+    box-sizing: border-box;
+}
+
+.intro-text-box {
+    background-color: rgba(11, 12, 16, 0.8);
+    border: 1px solid #555;
+    border-radius: 15px;
+    padding: 25px;
+    min-height: 120px;
+    width: 100%;
+    color: white;
+    text-align: left;
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+}
+
+.typing-text {
+    font-size: 1.3rem;
+    line-height: 1.7;
+    font-weight: 500;
+}
+
+.intro-next-btn {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: #66fcf1;
+    color: #0B0C10;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.intro-next-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(102, 252, 241, 0.5);
+}
+
+
+/* --- ESTILOS DO QUIZ --- */
 
 .quiz-screen {
     position: absolute;
@@ -14,35 +140,44 @@
     background-color: white;
     color: #333;
     z-index: 10;
-    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    transform: translateY(0);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(0);
 }
+
+.quiz-screen.hidden {
+    transform: translateY(100%);
+}
+
 .quiz-content {
     max-width: 700px;
     width: 90%;
     text-align: center;
     padding: 20px;
 }
+
 .quiz-content h1 {
     font-size: 2.5rem;
     color: #111;
     line-height: 1.4;
 }
+
 .quiz-content h1 u {
     text-decoration: underline;
     text-decoration-color: #007bff;
     text-decoration-thickness: 2px;
 }
+
 .quiz-options {
     display: flex;
     flex-direction: column;
     gap: 15px;
     margin-top: 30px;
 }
+
 .quiz-option-btn {
     padding: 15px;
     font-size: 1.1rem;
@@ -53,15 +188,13 @@
     text-align: left;
     transition: all 0.2s;
 }
+
 .quiz-option-btn:hover:not(:disabled) { background-color: #e0e0e0; border-color: #ccc; }
 .quiz-option-btn.selected { border-color: #3498db; background-color: #eaf5ff; }
 .quiz-option-btn.correct { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
 .quiz-option-btn.incorrect { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
 .quiz-option-btn:disabled { cursor: default; }
 
-.quiz-screen.hidden {
-    transform: translateY(100%);
-}
 
 .quiz-actions {
     margin-top: 40px;
@@ -80,17 +213,9 @@
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
-.action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-.action-btn:disabled {
-    cursor: not-allowed;
-    background-color: #ccc !important;
-    transform: none;
-    box-shadow: none;
-}
 
+.action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+.action-btn:disabled { cursor: not-allowed; background-color: #ccc !important; transform: none; box-shadow: none; }
 .hint-btn { color: #fff; background-color: #007bff; }
 .hint-btn:hover { background-color: #0056b3; }
 .confirm-btn { color: #fff; background-color: #6c757d; }
@@ -99,21 +224,29 @@
 .next-btn:hover { background-color: #424649; }
 
 
+/* --- ESTILOS DA TELA DE DICA (GRAFO) --- */
+
 .hint-screen {
     width: 100%;
     height: 100%;
     position: absolute;
     top: 0;
     left: 0;
+    /* CORREÇÃO: Fundo deve ser transparente para que o .quiz-container apareça por trás */
+    background-color: transparent;
     z-index: 5;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.8s ease-in-out;
 }
+
 .hint-screen.visible {
     opacity: 1;
     pointer-events: auto;
 }
+
+
+/* --- BOTÕES DE NAVEGAÇÃO --- */
 
 .back-to-home-button {
     position: fixed;
@@ -132,20 +265,13 @@
     cursor: pointer;
     text-decoration: none;
 }
-.back-to-home-button:hover {
-    background-color: #f0f0f0;
-    color: #111;
-    border-color: #aaa;
-}
-.back-to-home-button.hidden {
-    opacity: 0;
-    pointer-events: none;
-}
 
-/* --- ESTILO DO BOTÃO "VOLTAR AO QUIZ" ATUALIZADO --- */
+.back-to-home-button:hover { background-color: #f0f0f0; color: #111; border-color: #aaa; }
+.back-to-home-button.hidden { opacity: 0; pointer-events: none; }
+
 .back-to-quiz-button {
     position: fixed;
-    bottom: 40px; /* Ajustado para subir um pouco o botão */
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     padding: 10px 25px;
@@ -157,16 +283,26 @@
     background-color: #333;
     color: white;
     border: 1px solid #555;
-    z-index: 101; /* Garante que fique acima de outros elementos da dica */
+    z-index: 20;
     transition: all 0.3s ease;
 }
+
 .back-to-quiz-button:hover {
     background-color: #555;
     transform: translateX(-50%) scale(1.05);
 }
 
 
-#cy { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+/* --- ESTILOS DO CYTOSCAPE E SEUS CONTROLES --- */
+#cy {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
 #cy.cursor-pointer { cursor: pointer; }
 #tooltip { display: none; position: absolute; padding: 10px; z-index: 9999; }
 
@@ -201,9 +337,8 @@
     cursor: pointer;
     transition: background-color 0.2s;
 }
-.zoom-toggle-btn:hover {
-    background-color: #555;
-}
+
+.zoom-toggle-btn:hover { background-color: #555; }
 
 #zoom-controls span {
     color: #fff;
@@ -213,6 +348,7 @@
     cursor: pointer;
     user-select: none;
 }
+
 input[type=range] { -webkit-appearance: none; width: 120px; height: 5px; background: #555; outline: none; border-radius: 50px; }
 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: #66fcf1; cursor: pointer; border-radius: 50%; border: 2px solid #1f2833; }
 

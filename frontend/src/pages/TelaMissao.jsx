@@ -25,7 +25,7 @@ const TelaMissao = ({ onBack, onComplete }) => {
     }
   };
 
-  const fullText = "Greetings, crew member! I need your help with a space mission. You will have to answer a series of difficult questions. But don't worry - the stars will help you find the right path!";
+  const fullText = "Greetings, crew member! I need your help with a crucial space mission. Your objective is to navigate a series of difficult questions designed to test the sharpest minds in the fleet. This is where your journey begins.";
 
   // Efeito de digitação simplificado
   useEffect(() => {

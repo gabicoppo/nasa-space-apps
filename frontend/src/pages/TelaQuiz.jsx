@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import cytoscape from 'cytoscape';
 import { quizData } from '../data/quizData';
 import './TelaQuiz.css';
+import astronautaImg from '../assets/Imagem-astronauta2.png';
 
 const ConstellationHint = ({ onGoBack, isVisible, questionData }) => {
   const cyContainerRef = useRef(null);
@@ -19,7 +20,6 @@ const ConstellationHint = ({ onGoBack, isVisible, questionData }) => {
         }
         return;
     }
-
     if (cyContainerRef.current) {
       const cy = cytoscape({
         container: cyContainerRef.current,
@@ -31,9 +31,7 @@ const ConstellationHint = ({ onGoBack, isVisible, questionData }) => {
         layout: { name: 'cose', fit: true, padding: 50, idealEdgeLength: 180, nodeRepulsion: 5000, animate: 'end', animationDuration: 1500 },
         zoomingEnabled: true, userZoomingEnabled: true, panningEnabled: true, userPanningEnabled: true, minZoom: 0.5, maxZoom: 2,
       });
-
       cyInstanceRef.current = cy;
-      
       const tooltip = tooltipRef.current;
       
       cy.on('mouseover', 'node, edge', (event) => {
@@ -125,32 +123,21 @@ const ConstellationHint = ({ onGoBack, isVisible, questionData }) => {
       <div id="tooltip" ref={tooltipRef} />
       
       <div id="zoom-controls">
-        <button onClick={handleZoomToggle} className="zoom-toggle-btn">
-          {isZoomedIn ? 'Zoom Out' : 'Zoom In'}
-        </button>
-        <div className="zoom-slider-container">
-          <span id="zoom-out">-</span>
-          <input type="range" id="zoom-slider" />
-          <span id="zoom-in">+</span>
-        </div>
+        <button onClick={handleZoomToggle} className="zoom-toggle-btn">{isZoomedIn ? 'Zoom Out' : 'Zoom In'}</button>
+        <div className="zoom-slider-container"><span id="zoom-out">-</span><input type="range" id="zoom-slider" /><span id="zoom-in">+</span></div>
       </div>
     </div>
   );
 };
 
+// --- SUB-COMPONENTE DA TELA DO QUIZ (SEM ALTERAÇÕES INTERNAS) ---
 const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNextQuestion, isLastQuestion }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
-  
-  useEffect(() => {
-    setSelectedOption(null);
-    setIsAnswered(false);
-  }, [questionData]);
-
+  useEffect(() => { setSelectedOption(null); setIsAnswered(false); }, [questionData]);
+  const formatQuestionText = (text) => { if (!text) return ''; return text.replace(/__(.*?)__/g, '<u>$1</u>'); };
   const handleOptionClick = (option) => { if (isAnswered) return; setSelectedOption(option); };
   const handleConfirmClick = () => { if (!selectedOption) return; setIsAnswered(true); onAnswerSelect(selectedOption); };
-  const formatQuestionText = (text) => { if (!text) return ''; return text.replace(/__(.*?)__/g, '<u>$1</u>'); };
-
   return (
     <div className={`quiz-screen ${isHidden ? 'hidden' : ''}`}>
       <div className="quiz-content">
@@ -158,10 +145,8 @@ const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNext
         <div className="quiz-options">
           {questionData.options.map((option, index) => {
             let btnClass = "quiz-option-btn";
-            if (isAnswered) {
-              if (option === questionData.correctAnswer) { btnClass += " correct"; } 
-              else if (option === selectedOption) { btnClass += " incorrect"; }
-            } else if (option === selectedOption) { btnClass += " selected"; }
+            if (isAnswered) { if (option === questionData.correctAnswer) { btnClass += " correct"; } else if (option === selectedOption) { btnClass += " incorrect"; } } 
+            else if (option === selectedOption) { btnClass += " selected"; }
             return (<button key={index} className={btnClass} onClick={() => handleOptionClick(option)} disabled={isAnswered}>{option}</button>);
           })}
         </div>
@@ -179,20 +164,51 @@ const QuizScreen = ({ onShowHint, isHidden, questionData, onAnswerSelect, onNext
   );
 };
 
+// --- COMPONENTE PRINCIPAL DA PÁGINA ---
 export default function TelaQuiz() {
+  const [introStep, setIntroStep] = useState(0);
+
+  const dialogs = [
+    "  Your first challenge consists of three critical questions drawn from NASA's greatest discoveries.", 
+    "  But don't worry, every great explorer needs a guide. For this journey, your map is the stars in our knowledge graph.",
+    "  Follow the lines connecting each star, as they hold the clues needed to illuminate the answers.",
+    "  Ready to embark on this cosmic quest? Let's begin!"
+  ];
+  
+  const handleNextDialog = () => {
+    setIntroStep(prev => prev + 1);
+  };
+  
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const isSpace = e.key === " " || e.code === "Space";
+      if (isSpace && introStep < dialogs.length) {
+        e.preventDefault();
+        handleNextDialog();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [introStep]);
+
   const [isHintVisible, setIsHintVisible] = useState(false);
   const [isHomeButtonVisible, setIsHomeButtonVisible] = useState(true);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
-
   const currentQuestion = quizData[currentQuestionIndex];
-
   const handleShowHint = () => { setIsHintVisible(true); setIsHomeButtonVisible(false); };
   const handleHideHint = () => { setIsHintVisible(false); setTimeout(() => { setIsHomeButtonVisible(true); }, 750); };
   const handleAnswerSelect = (selectedAnswer) => { if (selectedAnswer === currentQuestion.correctAnswer) { setScore(score + 1); } };
   const handleNextQuestion = () => { const nextIndex = currentQuestionIndex + 1; if (nextIndex < quizData.length) { setCurrentQuestionIndex(nextIndex); } else { setShowResults(true); } };
-  const restartQuiz = () => { setCurrentQuestionIndex(0); setScore(0); setShowResults(false); }
+  
+  const restartQuiz = () => {
+    setCurrentQuestionIndex(0);
+    setScore(0);
+    setShowResults(false);
+    // A LINHA ABAIXO FOI REMOVIDA PARA NÃO MOSTRAR A INTRODUÇÃO NOVAMENTE
+    // setIntroStep(0); 
+  }
 
   return (
     <div className="quiz-container">
