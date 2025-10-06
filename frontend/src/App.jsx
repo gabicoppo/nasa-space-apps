@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "./App.css";
 import "./index.css";
@@ -13,38 +13,29 @@ import { queryBuildKG } from './services/apiServices';
 import GlobalStyles from "./GlobalStyles";
 
 function App() {
-  const [currentScreen, setCurrentScreen] = useState('landing');
+  // State to track if the backend has responded to the initial wake-up call
+  const [isBackendReady, setIsBackendReady] = useState(false);
 
-
+  // This effect runs only once when the App component mounts
   useEffect(() => {
     const wakeUpBackend = async () => {
       try {
-        console.log('Waking up backend...');
-        const response = await queryBuildKG("test");
-        
-        if (response.ok) {
-          console.log('Backend activated successfully');
-        }
+        console.log('Waking up the knowledge source... Use the time to explore the quiz!');
+        // We just need to wait for the call to finish, no need to process the response
+        await queryBuildKG("test");
+        console.log('Backend activated successfully.');
       } catch (error) {
-        console.error('Failed to wake up backend:', error);
-        // You can choose to retry or handle the error as needed
+        console.error('Failed to wake up knowledge source, but enabling UI anyway:', error);
+      } finally {
+        // IMPORTANT: Set to true even if the call fails.
+        // This prevents the user from being locked out if the server has a hiccup.
+        // The goal is just to wait for the initial cold start to finish.
+        setIsBackendReady(true);
       }
     };
 
     wakeUpBackend();
-  }, []); // Empty dependency array ensures this runs only once on mount
-
-  const handleMissionStart = useCallback(() => {
-    setCurrentScreen('mission');
-  }, []);
-
-  const handleBack = useCallback(() => {
-    setCurrentScreen('landing');
-  }, []);
-
-  const handleMissionComplete = useCallback(() => {
-    setCurrentScreen('sobreProjeto');
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once
 
   return (
     <>
@@ -54,7 +45,7 @@ function App() {
         rel="stylesheet"
       />
 
-      {/* Fundo estrelado gerenciado globalmente aqui */}
+      {/* Starry background managed globally */}
       <div className="stars" aria-hidden="true" />
       <div className="twinkling" aria-hidden="true" />
       <div className="planet-earth" aria-hidden="true" />
@@ -63,15 +54,13 @@ function App() {
         <main className="app-main" role="main">
           <Routes>
             <Route path="/" element={<HomePage />} />
-
             <Route path="/telamissao" element={<TelaMissao />} />
-
             <Route path="/quiz" element={<TelaQuiz />} />
-              
-            <Route path="/telamissao" element={<TelaMissao />} />
-
-            <Route path="/telainicial" element={<TelaInicial />} />
-              
+            {/* Pass the isBackendReady state as a prop to TelaInicial */}
+            <Route 
+              path="/telainicial" 
+              element={<TelaInicial isBackendReady={isBackendReady} />} 
+            />
             <Route path="/sobreprojeto" element={<SobreProjeto />} />
           </Routes>
         </main>
