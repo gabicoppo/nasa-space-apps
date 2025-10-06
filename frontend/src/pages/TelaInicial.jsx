@@ -174,7 +174,7 @@ const TelaInicial = ({ isBackendReady }) => {
 
   return (
     <div className="main-container-scroll">
-      <Link to="/" className="back-button"> ← Voltar </Link>
+      <Link to="/" className="back-button"> ← Back </Link>
       <section className="search-section">
         <main className="tela-inicial">
           <h1 className="tela-inicial__title">Bioastra Explorer</h1>
