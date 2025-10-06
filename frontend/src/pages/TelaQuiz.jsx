@@ -4,14 +4,14 @@ import cytoscape from 'cytoscape';
 import { quizData } from '../data/quizData';
 import './TelaQuiz.css';
 
-const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
+const ConstellationHint = ({ onGoBack, isVisible, questionData }) => {
   const cyContainerRef = useRef(null);
   const tooltipRef = useRef(null);
   const cyInstanceRef = useRef(null);
   const [isZoomedIn, setIsZoomedIn] = useState(false);
 
   useEffect(() => {
-    if (!isVisible) {
+    if (!isVisible || !questionData) {
         setIsZoomedIn(false);
         if (cyInstanceRef.current) {
             cyInstanceRef.current.destroy();
@@ -23,7 +23,7 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
     if (cyContainerRef.current) {
       const cy = cytoscape({
         container: cyContainerRef.current,
-        elements: [ ...graphData.nodes, ...graphData.edges ],
+        elements: [ ...questionData.graphData.nodes, ...questionData.graphData.edges ],
         style: [
             { selector: 'node', style: { 'shape': 'ellipse', 'background-color': (ele) => ele.data('color'), 'label': 'data(name)', 'color': 'white', 'text-outline-color': '#000', 'text-outline-width': '2px', 'font-size': 14, 'width': 120, 'height': 120, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': '100px', 'border-width': '8px', 'border-color': (ele) => ele.data('color'), 'border-opacity': 0.5 } },
             { selector: 'edge', style: { 'width': 3, 'line-color': '#45a29e', 'target-arrow-shape': 'triangle', 'target-arrow-color': '#45a29e', 'curve-style': 'bezier', 'line-opacity': 0.7 } }
@@ -35,10 +35,57 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
       cyInstanceRef.current = cy;
       
       const tooltip = tooltipRef.current;
-      cy.on('mouseover', 'node, edge', (event) => { cyContainerRef.current.classList.add('cursor-pointer'); const element = event.target; const description = element.data('description'); if (element.isNode()) { element.style('border-opacity', 0.9); } else { element.style({ 'line-color': '#66fcf1', 'target-arrow-color': '#66fcf1', 'line-opacity': 1 }); } if (description) { tooltip.innerHTML = description; tooltip.style.display = 'block'; } });
-      cy.on('mouseout', 'node, edge', (event) => { cyContainerRef.current.classList.remove('cursor-pointer'); const element = event.target; if (element.isNode()) { element.style('border-opacity', 0.5); } else { element.style({ 'line-color': '#45a29e', 'target-arrow-color': '#45a29e', 'line-opacity': 0.7 }); } tooltip.style.display = 'none'; });
+      
+      cy.on('mouseover', 'node, edge', (event) => {
+        cyContainerRef.current.classList.add('cursor-pointer');
+        const element = event.target;
+        let tooltipContent = '';
+
+        if (element.isNode()) {
+          element.style('border-opacity', 0.9);
+          const description = element.data('description');
+          
+          if (description) {
+            tooltipContent += `<p>${description}</p>`;
+          }
+          
+          if (questionData.article_name && questionData.url) {
+            tooltipContent += `<div class="tooltip-source">Source: <a href="${questionData.url}" target="_blank" rel="noopener noreferrer">${questionData.article_name}</a></div>`;
+          }
+
+        } else {
+          element.style({ 'line-color': '#66fcf1', 'target-arrow-color': '#66fcf1', 'line-opacity': 1 });
+          const description = element.data('description');
+          if (description) {
+            tooltipContent = description;
+          }
+        }
+        
+        if (tooltipContent) {
+          tooltip.innerHTML = tooltipContent;
+          tooltip.style.display = 'block';
+        }
+      });
+
+      cy.on('mouseout', 'node, edge', (event) => {
+        cyContainerRef.current.classList.remove('cursor-pointer');
+        const element = event.target;
+        if (element.isNode()) {
+          element.style('border-opacity', 0.5);
+        } else {
+          element.style({ 'line-color': '#45a29e', 'target-arrow-color': '#45a29e', 'line-opacity': 0.7 });
+        }
+        tooltip.style.display = 'none';
+      });
       cy.on('mousemove', (event) => { tooltip.style.left = `${event.originalEvent.pageX + 15}px`; tooltip.style.top = `${event.originalEvent.pageY + 15}px`; });
-      cy.on('tap', 'node', (evt) => { const node = evt.target; const url = node.data('link'); if (url) { window.open(url, '_blank'); } });
+      
+      // --- MODIFIED: Node click now opens the main article URL ---
+      cy.on('tap', 'node', () => {
+        const articleUrl = questionData.url;
+        if (articleUrl) {
+          window.open(articleUrl, '_blank', 'noopener,noreferrer');
+        }
+      });
 
       const zoomSlider = document.getElementById('zoom-slider');
       const zoomInBtn = document.getElementById('zoom-in');
@@ -58,7 +105,7 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
       }
     }
     return () => { if (cyInstanceRef.current) { cyInstanceRef.current.destroy(); cyInstanceRef.current = null; } };
-  }, [isVisible, graphData]);
+  }, [isVisible, questionData]);
 
   const handleZoomToggle = () => {
     const cy = cyInstanceRef.current;
@@ -70,8 +117,6 @@ const ConstellationHint = ({ onGoBack, isVisible, graphData }) => {
 
   return (
     <div className={`hint-screen ${isVisible ? 'visible' : ''}`}>
-      {/* --- CLASSE DO BOTÃO "VOLTAR" ATUALIZADA --- */}
-        {/* --- UPDATED: BACK BUTTON --- */}
         <button onClick={onGoBack} className="back-to-quiz-button">
           Back to Quiz
         </button>
@@ -158,19 +203,28 @@ export default function TelaQuiz() {
       {showResults ? (
         <div className="quiz-screen">
           <div className="quiz-content">
-            <h1>Quiz Finalizado!</h1>
               <h1>Quiz Finished!</h1>
               <p style={{fontSize: '1.5rem', margin: '20px 0'}}>Your score: {score} out of {quizData.length}</p>
             <div className="quiz-actions" style={{justifyContent: 'center'}}>
-                <button onClick={restartQuiz} className="action-btn next-btn">Tentar Novamente</button>
                   <button onClick={restartQuiz} className="action-btn next-btn">Try Again</button>
             </div>
           </div>
         </div>
       ) : (
         <>
-          <ConstellationHint onGoBack={handleHideHint} isVisible={isHintVisible} graphData={currentQuestion.graphData} />
-          <QuizScreen onShowHint={handleShowHint} isHidden={isHintVisible} questionData={currentQuestion} onAnswerSelect={handleAnswerSelect} onNextQuestion={handleNextQuestion} isLastQuestion={currentQuestionIndex === quizData.length - 1} />
+          <ConstellationHint 
+            onGoBack={handleHideHint} 
+            isVisible={isHintVisible} 
+            questionData={currentQuestion} 
+          />
+          <QuizScreen 
+            onShowHint={handleShowHint} 
+            isHidden={isHintVisible} 
+            questionData={currentQuestion} 
+            onAnswerSelect={handleAnswerSelect} 
+            onNextQuestion={handleNextQuestion} 
+            isLastQuestion={currentQuestionIndex === quizData.length - 1} 
+          />
         </>
       )}
     </div>
