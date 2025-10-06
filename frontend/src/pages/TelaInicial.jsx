@@ -88,13 +88,12 @@ const GraphDisplay = ({ graphData }) => {
   }, [graphData]);
 
   return (
+    
     <section className="graph-section" id="graph-view">
       <div id="cy" ref={cyContainerRef} />
       <div id="tooltip" ref={tooltipRef} />
       <div id="zoom-controls">
-        <span id="zoom-in">+</span>
-        <span id="zoom-out">-</span>
-        <input type="range" id="zoom-slider" />
+        <div className="zoom-slider-container"><span id="zoom-out">-</span><input type="range" id="zoom-slider" /><span id="zoom-in">+</span></div>
       </div>
     </section>
   );
